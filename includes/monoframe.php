@@ -83,6 +83,8 @@ class Monoframe
 	}
    
    static function setup_constants(){
+		global $table_prefix;
+		
 		if(current_user_can('develop_for_awesomeui'))
 				define('DEVELOP_FOR_AWESOMEUI', true);
 		else	
@@ -90,7 +92,7 @@ class Monoframe
 		
 
 		//standard setup for cache
-		aw2_library::setup_env_cache('wp_env_cache'); 		
+		aw2_library::setup_env_cache('env_cache'.$table_prefix.DB_NAME); 		
 	   
    }
    

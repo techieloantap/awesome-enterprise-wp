@@ -20,13 +20,17 @@ if (!defined('REQUEST_START_POINT'))define('REQUEST_START_POINT', '');
 
 define('AWESOME_APP_BASE_PATH', SITE_URL . REQUEST_START_POINT);
 
+define('HANDLERS_PATH', AWESOME_PATH.'/core-handlers');
+define('WP_HANDLERS_PATH',  __DIR__ .'/handlers');
+define('EXTRA_HANDLERS_PATH', AWESOME_PATH.'/extra-handlers');
 
+require  __DIR__ .'/vendor/autoload.php';
+require AWESOME_PATH.'/vendor/autoload.php';
 
 
 $plugin_data = get_file_data(__FILE__, array('Version' => 'Version'), false);
 define('AWE_VERSION',$plugin_data['Version']);
 
-require  __DIR__ .'/vendor/autoload.php';
 
 
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
@@ -41,12 +45,9 @@ $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 
 
+
 require_once AWESOME_PATH.'/libraries/util/util.php';
 require_once AWESOME_PATH.'/includes/aw2_library.php';
-//amit::sort out
-
-require AWESOME_PATH.'/vendor/autoload.php';
-
 
 require_once AWESOME_PATH.'/includes/awesome_flow.php';
 require_once AWESOME_PATH.'/includes/awesome_app.php';
@@ -63,19 +64,17 @@ require_once __DIR__ .'/includes/monoframe.php';
 require_once __DIR__ .'/includes/wordpress-hooks.php';
 
 
-define('HANDLERS_PATH', AWESOME_PATH.'/core-handlers');
-define('EXTRA_HANDLERS_PATH', AWESOME_PATH.'/extra-handlers');
-
-aw2_library::loader_handlers_from_path(HANDLERS_PATH,'structure','lang','cache','session');
-aw2_library::loader_handlers_from_path(EXTRA_HANDLERS_PATH,'debug');
-aw2_library::loader_handlers_from_path(HANDLERS_PATH,'utils');
-aw2_library::loader_handlers_from_path(EXTRA_HANDLERS_PATH,'communication');
-aw2_library::loader_handlers_from_path(HANDLERS_PATH,'database');
-aw2_library::loader_handlers_from_path(EXTRA_HANDLERS_PATH,'wp');
-aw2_library::loader_handlers_from_path(HANDLERS_PATH,'front-end');
-aw2_library::loader_handlers_from_path(EXTRA_HANDLERS_PATH,'thrid-party');
 
 
-//$awe = new AW_Studio();
+aw2_library::load_handlers_from_path(HANDLERS_PATH,'structure','lang','cache','session');
+aw2_library::load_handlers_from_path(HANDLERS_PATH,'utils');
+aw2_library::load_handlers_from_path(HANDLERS_PATH,'database');
+aw2_library::load_handlers_from_path(HANDLERS_PATH,'front-end');
 
+/* aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'communication');
+aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'debug');
+aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'third-party'); */
+
+aw2_library::load_handlers_from_path(WP_HANDLERS_PATH,'wp');
+aw2_library::load_all_extra_handlers();
 

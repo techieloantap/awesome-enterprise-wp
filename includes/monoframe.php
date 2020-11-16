@@ -15,19 +15,12 @@ class Monoframe
 	
 		require_once( $plugin_path . '/libraries/editor/aw-code-editor.php' );
 		require_once( $plugin_path . '/libraries/editor/devcap.php' );
-		
-		
 		require(  $plugin_path . '/libraries/menu-walkers/navwalkers.php' ); 
-              
-                
-                // include zoho SDK
-        //require_once (  $plugin_path .'/libraries/zoho/zoho.php');
+
 		require_once( $plugin_path . '/libraries/metaboxes.php' );
-		//require_once( $plugin_path . '/libraries/acf-blocks.php' );
+		require_once( $plugin_path . '/libraries/acf-blocks.php' );
 		require_once( $plugin_path . '/libraries/export-apps/import-export-apps.php' ); 
-		 
-		// Include Module Distributable files.
-		require_once( $plugin_path . '/libraries/module-distribution/code-distributables.php' );	
+		
 	}
 		
 		// use the action to create a place for your meta box
@@ -147,8 +140,7 @@ function monoframe_upload_mimes ( $existing_mimes=array() ) {
 
 	$existing_mimes['svg'] = 'mime/type';
 
-        // call the modified list of extensions
-
+    // call the modified list of extensions
 	return $existing_mimes;
 
 }

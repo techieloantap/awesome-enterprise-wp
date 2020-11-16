@@ -4,7 +4,7 @@ Plugin Name: Awesome Enterprise WP
 Plugin URI: http://www.getawesomestudio.com
 Description: Awesome Enterprise Framework is a shortcode based low code platform along with massive collection beautifully designed, fully responsive and easy to use UI parts. 
 Version: 3.0.0
-Author: WPoets
+Author: WPoets Team
 Author URI: http://www.wpoets.com
 License: GPLv3 or Later
 */

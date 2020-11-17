@@ -2,7 +2,7 @@
 /*
 Plugin Name: Awesome Enterprise WP
 Plugin URI: http://www.getawesomestudio.com
-Description: Awesome Enterprise Framework is a shortcode based low code platform along with massive collection beautifully designed, fully responsive and easy to use UI parts. 
+Description: Awesome Enterprise is a shortcode based low code platform which comes with a useful services and apps that enables us to create easily custom Workflows in WordPress. 
 Version: 3.0.0
 Author: WPoets Team
 Author URI: http://www.wpoets.com
@@ -23,6 +23,11 @@ define('AWESOME_APP_BASE_PATH', SITE_URL . REQUEST_START_POINT);
 define('HANDLERS_PATH', AWESOME_PATH.'/core-handlers');
 define('WP_HANDLERS_PATH',  __DIR__ .'/handlers');
 define('EXTRA_HANDLERS_PATH', AWESOME_PATH.'/extra-handlers');
+
+if(!defined(AWESOME_PATH) || !file_exists(AWESOME_PATH.'/includes/aw2_library.php')){
+	echo 'Issue with AWESOME_PATH '.AWESOME_PATH.' make sure it is defined and path readable';
+	return;
+}
 
 require  __DIR__ .'/vendor/autoload.php';
 require AWESOME_PATH.'/vendor/autoload.php';
@@ -70,10 +75,6 @@ aw2_library::load_handlers_from_path(HANDLERS_PATH,'structure','lang','cache','s
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'utils');
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'database');
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'front-end');
-
-/* aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'communication');
-aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'debug');
-aw2_library::load_handlers_from_path(EXTRA_HANDLERS_PATH,'third-party'); */
 
 aw2_library::load_handlers_from_path(WP_HANDLERS_PATH,'wp');
 aw2_library::load_all_extra_handlers();

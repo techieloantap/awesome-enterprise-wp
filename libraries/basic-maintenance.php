@@ -6,10 +6,6 @@ Maintenance mode ON
 add_action('wp', 'monoframe_template_redirect', 1);
 
 function monoframe_template_redirect(){
-	global $monomyth_options;
-	
-	
-	
 	if(aw2_library::get('site_settings.opt-m-mode.exists'))
 	{  
 		$m_mode = aw2_library::get('site_settings.opt-m-mode');

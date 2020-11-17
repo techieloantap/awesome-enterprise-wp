@@ -20,6 +20,7 @@ class Monoframe
 		require_once( $plugin_path . '/libraries/metaboxes.php' );
 		require_once( $plugin_path . '/libraries/acf-blocks.php' );
 		require_once( $plugin_path . '/libraries/export-apps/import-export-apps.php' ); 
+		require_once( $plugin_path . '/libraries/basic-maintenance.php' ); 
 		
 	}
 		
@@ -82,7 +83,7 @@ class Monoframe
 		
 	}
    
-   static function setup_constants(){
+    static function setup_constants(){
 		global $table_prefix;
 		
 		if(current_user_can('develop_for_awesomeui'))
@@ -99,76 +100,66 @@ class Monoframe
    /**
    * Add a nice red to the admin bar when we're in development mode
    */
-  function mono_dev_colorize() { 
-	global $monomyth_options;
-	$MM_PRODUCTION = false;
-	if(isset($monomyth_options['dev_mode']))
-		$MM_PRODUCTION = $monomyth_options['dev_mode'];
-    if(!$MM_PRODUCTION) {
-    ?>
-    <style>
-      
-      <?php if ( is_admin_bar_showing() ) : ?>
-        html { 
-          padding-top: 5px; 
-        }
-      <?php endif; ?>
-      #wpadminbar {
-        border-top: 5px solid #d84315;
-        -moz-box-sizing: content-box !important;
-        box-sizing: content-box !important;
-      }
-      #wp-admin-bar-site-name > a {
-        background-color: #d84315;
-        color: #f1f1f1;
-      }
-    </style>
-    <?php }
-  }
+	function mono_dev_colorize() { 
+		global $monomyth_options;
+		$MM_PRODUCTION = false;
+		if(isset($monomyth_options['dev_mode']))
+			$MM_PRODUCTION = $monomyth_options['dev_mode'];
+		
+		if(!$MM_PRODUCTION) {
+		?>
+			<style>
+			  
+			  <?php if ( is_admin_bar_showing() ) : ?>
+				html { 
+				  padding-top: 5px; 
+				}
+			  <?php endif; ?>
+			  #wpadminbar {
+				border-top: 5px solid #d84315;
+				-moz-box-sizing: content-box !important;
+				box-sizing: content-box !important;
+			  }
+			  #wp-admin-bar-site-name > a {
+				background-color: #d84315;
+				color: #f1f1f1;
+			  }
+			</style>
+	<?php }
+	}
+
+	function upload_mimes ( $existing_mimes=array() ) {
+
+		// add the file extension to the array
+
+		$existing_mimes['svg'] = 'mime/type';
+
+		// call the modified list of extensions
+		return $existing_mimes;
+
+	}
+	
+	function do_menu_shortcodes( $menu ){ 
+        return aw2_library::parse_shortcode( $menu ); 
+	}
+	
+	function cptui_all_objects( $args) {
+		unset($args['public']);
+		return $args;
+	}
 }
 
 monoframe::load();
 $monoframe = new monoframe();
+
 add_action('edit_form_after_title',array($monoframe,'add_before_editor'));
 add_filter( 'admin_head', array($monoframe,'mono_dev_colorize' ));
 add_filter( 'wp_head', array($monoframe,'mono_dev_colorize' ));
 
+add_filter('wp_nav_menu', array($monoframe,'do_menu_shortcodes' )); 
+add_filter('upload_mimes', array($monoframe,'upload_mimes' ));
 
-add_filter('upload_mimes', 'monoframe_upload_mimes');
+add_filter( 'cptui_attach_taxonomies_to_post_type', array($monoframe,'cptui_all_objects' ), 10, 1 );
+add_filter( 'cptui_attach_post_types_to_taxonomy', array($monoframe,'cptui_all_objects' ), 10, 1 );
 
-function monoframe_upload_mimes ( $existing_mimes=array() ) {
-
-	// add the file extension to the array
-
-	$existing_mimes['svg'] = 'mime/type';
-
-    // call the modified list of extensions
-	return $existing_mimes;
-
-}
-
-function custom_taxonomy_tree_walker( $taxonomy, $parent = 0,$level = 1 ) {
-    $terms = get_terms( $taxonomy, array( 'parent' => $parent, 'hide_empty' => false ) );
-    if( count($terms) > 0 ) {
-        $output = '';
-        foreach ($terms as $term) {
-            // function calls itself to display child elements, if any
-            $output .= '<option value="'.$term->slug.'"> ' .str_repeat("-", $level).' '. $term->name . '</option>'. custom_taxonomy_tree_walker($taxonomy, $term->term_id,$level+1);
-        }
-         
-        return $output;
-    }
-    return false;
-}
-
-add_filter( 'cptui_attach_taxonomies_to_post_type', 'cptui_all_objects', 10, 1 );
-add_filter( 'cptui_attach_post_types_to_taxonomy', 'cptui_all_objects', 10, 1 );
-function cptui_all_objects( $args) {
-	unset($args['public']);
-	return $args;
-}
-
-add_filter('wp_nav_menu', 'monoframe_do_menu_shortcodes'); 	
-function monoframe_do_menu_shortcodes( $menu ){ 
-        return aw2_library::parse_shortcode( $menu ); 
-}
+	

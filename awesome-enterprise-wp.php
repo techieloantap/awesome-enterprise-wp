@@ -51,7 +51,7 @@ $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 
 
-require_once AWESOME_PATH.'/libraries/util/util.php';
+require_once AWESOME_PATH.'/includes/util.php';
 require_once AWESOME_PATH.'/includes/aw2_library.php';
 
 require_once AWESOME_PATH.'/includes/awesome_flow.php';

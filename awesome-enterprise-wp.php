@@ -24,7 +24,7 @@ define('HANDLERS_PATH', AWESOME_PATH.'/core-handlers');
 define('WP_HANDLERS_PATH',  __DIR__ .'/handlers');
 define('EXTRA_HANDLERS_PATH', AWESOME_PATH.'/extra-handlers');
 
-if(!defined(AWESOME_PATH) || !file_exists(AWESOME_PATH.'/includes/aw2_library.php')){
+if(!defined('AWESOME_PATH') || !file_exists(AWESOME_PATH.'/includes/aw2_library.php')){
 	echo 'Issue with AWESOME_PATH '.AWESOME_PATH.' make sure it is defined and path readable';
 	return;
 }

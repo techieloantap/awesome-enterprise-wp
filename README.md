@@ -11,6 +11,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog  
 
+##### 3.0.1  
+* Fixed the path for util.php 
+
 ##### 3.0.0  
 * Initial release
 

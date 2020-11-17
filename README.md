@@ -9,10 +9,10 @@ To use this plugin you will also need to install the Awesome Enterprise Framewor
 You will need to update the wp-config.php file with various defines specified in sample-config.php in the samples-index folder.
 
 
-=== Changelog ===
+### Changelog  
 
-= 3.0.0 =
+##### 3.0.0  
 * Initial release
 
-== Upgrade Notice ==
+### Upgrade Notice  
 

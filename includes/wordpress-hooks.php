@@ -16,7 +16,3 @@
 	add_action('wp_footer', 'awesome_flow::footer');
 	add_filter( 'nav_menu_css_class', 'apps_setup_wp::nav_menu_css_class', 10, 3 );
 	
-	add_filter( 'wpseo_sitemap_index', 'apps_setup_wp::add_apps_to_yoast_sitemap' );
-
-	//To remove all the app pages and app post from the sitemap_index
-	add_filter( 'wpseo_sitemap_exclude_post_type', 'apps_setup_wp::sitemap_exclude_post_type', 10, 2 );

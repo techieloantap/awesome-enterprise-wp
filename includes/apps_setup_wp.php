@@ -15,11 +15,7 @@ class apps_setup_wp{
 		
 		self::register_service_cpts();
 		\aw2\debug\flow(['main'=>'Service CPTs Registered']);	
-		$registered_apps=&aw2_library::get_array_ref('apps');
-		foreach($registered_apps as $key=>$app){
-			if(!app_seo::enable_sitemap($app)) continue;
-			app_seo::setup_yoast_links($app['slug']);	
-		}
+		
 		awesome_flow::run_core('register');
 		\aw2\debug\flow(['main'=>'Custom CPTs Registered']);			
 		if(is_admin())return;

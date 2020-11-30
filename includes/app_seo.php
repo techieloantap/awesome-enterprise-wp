@@ -4,7 +4,7 @@
 
 require_once dirname( __FILE__) .'/seo/yoast-seo.php';
 
-//require_once dirname( __FILE__) .'/seo/rankmath-seo.php';
+require_once dirname( __FILE__) .'/seo/rankmath-seo.php';
 
 
 

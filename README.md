@@ -14,6 +14,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog  
 
+##### 3.0.2  
+* Improved: Added support for Rank Math seo plugin for app site maps. 
+
 ##### 3.0.1  
 * Fixed the path for util.php 
 

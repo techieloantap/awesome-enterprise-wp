@@ -35,7 +35,7 @@ class awesome_import_export{
 			wp_enqueue_style( 'ladda-css', '//cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.9.4/ladda.min.css', array(), '3.1.1' );
 		}
 		
-		wp_enqueue_script( 'awsome-import-export-script', plugins_url('import-export-apps/js/import-export.js',dirname(__FILE__)), array() );
+		wp_enqueue_script( 'awsome-import-export-script', plugins_url('export-apps/js/import-export.js',dirname(__FILE__)), array() );
 	}
 	
 	static function import_export_dashboard(){

@@ -53,13 +53,13 @@ $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 require_once AWESOME_PATH.'/includes/util.php';
 require_once AWESOME_PATH.'/includes/aw2_library.php';
-require_once AWESOME_PATH.'/includes/awesome-wp-util.php';
 
 require_once AWESOME_PATH.'/includes/awesome_flow.php';
 require_once AWESOME_PATH.'/includes/awesome_app.php';
 require_once AWESOME_PATH.'/includes/awesome_auth.php';
 require_once AWESOME_PATH.'/includes/awesome-controllers.php';
 
+require_once __DIR__ .'/includes/awesome-wp-util.php';
 require_once __DIR__ .'/includes/apps_setup_wp.php';
 require_once __DIR__ .'/includes/app_seo.php';
 require_once __DIR__ .'/includes/awesome-menus.php';

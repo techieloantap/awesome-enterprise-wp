@@ -120,7 +120,7 @@ class apps_setup_wp{
 				//$service_post_type[] =  $handler['post_type'];
 				if(!post_type_exists( $handler['post_type'] ))
 					//self::register_cpt($handler['post_type'],$handler['service_label'],'',false);
-					\aw2_library::register_module($handler['post_type'],$handler['service_label'],$handler['service_label'],'service');
+					\awesome_wp_utils::register_module($handler['post_type'],$handler['service_label'],$handler['service_label'],'service');
 			}	
 		}
 		
@@ -210,7 +210,7 @@ class apps_setup_wp{
 					$supports = array('title','editor','revisions','custom-fields');
 					
 				if(!post_type_exists( $collection['post_type'] ))
-					\aw2_library::register_module($collection['post_type'],ucwords($app['name'] . ' ' . rtrim($collection_name,'s')) , ucwords($app['name'] . ' ' . $collection_name),'config',$supports );
+					\awesome_wp_utils::register_module($collection['post_type'],ucwords($app['name'] . ' ' . rtrim($collection_name,'s')) , ucwords($app['name'] . ' ' . $collection_name),'config',$supports );
 					
 				}
 				
@@ -226,7 +226,7 @@ class apps_setup_wp{
 				
 				if($collection_name == 'modules'){
 					if(!post_type_exists( $collection['post_type'] ))
-						\aw2_library::register_module($collection['post_type'],ucwords($app['name'] . ' ' . rtrim($collection_name,'s')) , ucwords($app['name'] . ' ' . $collection_name),'modules' );
+						\awesome_wp_utils::register_module($collection['post_type'],ucwords($app['name'] . ' ' . rtrim($collection_name,'s')) , ucwords($app['name'] . ' ' . $collection_name),'modules' );
 
 				}
 				

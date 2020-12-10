@@ -53,6 +53,7 @@ $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 require_once AWESOME_PATH.'/includes/util.php';
 require_once AWESOME_PATH.'/includes/aw2_library.php';
+require_once AWESOME_PATH.'/includes/awesome-wp-util.php';
 
 require_once AWESOME_PATH.'/includes/awesome_flow.php';
 require_once AWESOME_PATH.'/includes/awesome_app.php';

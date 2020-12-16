@@ -53,18 +53,20 @@ function _wget($atts,$content=null,$shortcode=null){
 	), $atts, 'wp.get' ) );
 	
 	if(empty($main)) return 'error: You must have main attribute to get the data with wp.get shortcode';
+	if(is_array($main))return 'error: array was passed to get';
+	if(is_object($main))return 'error: object was passed to get';
 	
-	$pieces=explode('.',$main); // to support [wp.get option.xyz /]
-
-	$main_piece = isset($pieces[1])? $pieces[1]:null;
 	
-	$aw2wp_get=new aw2wp_get($pieces[0],$atts,$content,$main_piece);
+	$pieces=explode('.',$main); // to support [wp.get option.xyz.y /] 
+	$return_value='';
+	$action = array_shift($pieces);
+	
+	$aw2wp_get=new aw2wp_get($action,$atts,$content,$pieces);
 	if($aw2wp_get->status==false){
 		return \aw2_library::get('errors');
 	}
-	$return_value =$aw2wp_get->run();
-		
 	
+	$return_value = $aw2wp_get->run();
 	if($return_value==='')$return_value=$default;
 	
 	$return_value=\aw2_library::post_actions('all',$return_value,$atts);
@@ -74,15 +76,16 @@ function _wget($atts,$content=null,$shortcode=null){
 class aw2wp_get{ 
 	
 	public $action=null;
-	public $main_piece=null;
+	public $pieces=null;
 	public $atts=null;
 	public $content=null;
 	public $status=false;
+	public $value='';
 	
 	function __construct($action,$atts,$content=null,$main_piece=null){
      if (method_exists($this, $action)){
 		$this->action=$action;
-		$this->main_piece=$main_piece;
+		$this->pieces=$main_piece;
 		$this->atts=$atts;
 		$this->content=trim($content);
 		$this->status=true;
@@ -90,8 +93,31 @@ class aw2wp_get{
 	}
 	
 	function run(){
-     if (method_exists($this, $this->action))
-		return call_user_func(array($this, $this->action));
+     if (method_exists($this, $this->action)){
+		
+		$this->value = call_user_func(array($this, $this->action));
+		
+		if(!is_array($this->pieces))
+			$this->pieces=array();
+		
+		while(count($this->pieces)>0) {
+			if(is_object($this->value)){
+				\aw2_library::resolve_object($this);
+			}	
+			elseif(is_array($this->value) ){
+				\aw2_library::resolve_array($this);
+			}
+			elseif(is_string($this->value) || is_bool($this->value) || is_numeric($this->value)){
+				$this->value = \aw2_library::resolve_string($o);
+			}
+			else{
+				$this->value='';
+				$this->pieces=array();
+			}
+		}
+
+		return $this->value;
+	 }	
      else
 		\aw2_library::set_error('Register Method does not exist'); 
 	}
@@ -330,13 +356,14 @@ class aw2wp_get{
 	}
 	
 	function option(){
-
-		if(empty($this->main_piece)){
+		
+		if(empty($this->pieces)){
 			\aw2_library::set_error('the format is option.<key> to get the value'); 
 			return '';
 		}
 
-		$value=get_option( $this->main_piece );
+		$option=array_shift($this->pieces);
+		$value=get_option( $option );
 		
 		if($value===false){
 			\aw2_library::set_error('Option '. $this->main_piece.' dose not exists'); 

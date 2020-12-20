@@ -115,12 +115,12 @@ class awesome2_register{
 	
 	function less_variables(){
 		
-		$less_variables=\aw2_library::get('less_variables');
+		$less_variables=\aw2_library::get('css.less_variables');
 		
 		$args = \aw2_library::parse_shortcode($this->content);
 		$less_variables = $less_variables .' '.$args;
 		
-		\aw2_library::set('less_variables',$less_variables );		
+		\aw2_library::set('css.less_variables',$less_variables );		
 		
 	}
 	

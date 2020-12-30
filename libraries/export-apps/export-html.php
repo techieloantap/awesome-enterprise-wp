@@ -57,11 +57,7 @@ function awesome_export_html( $args = array() ) {
 		$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", gmdate( 'Y-m-d', strtotime( '+1 month', strtotime( $args['end_date'] ) ) ) );
 	}
 	
-	
-echo "SELECT ID FROM {$wpdb->posts} $join WHERE $where" ;
-
-
-	// Grab a snapshot of post IDs, just in case it changes during the export.
+		// Grab a snapshot of post IDs, just in case it changes during the export.
 	$post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} $join WHERE $where" );
 
 		
@@ -76,7 +72,7 @@ echo "SELECT ID FROM {$wpdb->posts} $join WHERE $where" ;
 		$wp_query->in_the_loop = true;
 		
 		$base_path=dirname(ABSPATH);
-	echo "$base_path" ;	
+	
 		// Fetch 20 posts at a time rather than loading the entire table into memory.
 		while ( $next_posts = array_splice( $post_ids, 0, 20 ) ) {
 			$where = 'WHERE ID IN (' . join( ',', $next_posts ) . ')';

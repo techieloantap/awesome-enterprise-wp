@@ -15,6 +15,12 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog  
 
+##### 3.0.3  
+* Improved: Added ability to export HTML modules for services to expose as an external package.
+* Improved: Resturecuted less variable registration so that env.dump is more clean
+* New: Added wp.get for accessing WordPress properties
+* Fixed: The export was reference wrong path for JS
+
 ##### 3.0.2  
 * Improved: Added support for Rank Math seo plugin for app site maps. 
 

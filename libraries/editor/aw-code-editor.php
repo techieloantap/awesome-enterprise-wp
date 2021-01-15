@@ -349,6 +349,9 @@ function awesome_init_codemirror( $post ) {
 		myCodeEditor.setValue(content);
 		myCodeEditor.clearHistory();
 		textarea.val(myCodeEditor.getValue());
+		myCodeEditor.focus(); 
+		<?php $charpos=isset($_GET['line_pos'])?$_GET['line_pos']:'0'; echo "charpos= $charpos;"; ?>
+		myCodeEditor.setCursor(myCodeEditor.posFromIndex(charpos));
 	</script>
 	<?php
 }

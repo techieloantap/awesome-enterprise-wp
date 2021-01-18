@@ -141,6 +141,8 @@ function getModulelist($app){
 }
 
 function rights_settings_init() {
+	if(!isset($_REQUEST['page'])) return;
+	
     $option_slug = $_REQUEST['page'];
     register_setting( 'rightsFields', $option_slug, 'rightsFieldsValidation' );
     

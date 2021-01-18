@@ -3,7 +3,7 @@
 Plugin Name: Awesome Enterprise WP
 Plugin URI: http://www.getawesomestudio.com
 Description: Awesome Enterprise is a shortcode based low code platform which comes with a useful services and apps that enables us to create easily custom Workflows in WordPress. 
-Version: 3.0.3
+Version: 3.0.4
 Author: WPoets Team
 Author URI: http://www.wpoets.com
 License: GPLv3 or Later
@@ -13,9 +13,11 @@ License: GPLv3 or Later
 if (!defined('IS_WP'))define('IS_WP', true);
 if (!defined('AWESOME_DEBUG'))define('AWESOME_DEBUG', false);
 
+if (!defined('ENV_CACHE_KEY'))define('ENV_CACHE_KEY', 'env_cache-'.$table_prefix.DB_NAME);
+
 if (!defined('AWESOME_CORE_POST_TYPE'))define('AWESOME_CORE_POST_TYPE', 'awesome_core');
 if (!defined('AWESOME_APPS_POST_TYPE'))define('AWESOME_APPS_POST_TYPE', 'aw2_app');
-
+'env_cache'.$table_prefix.DB_NAME
 if (!defined('REQUEST_START_POINT'))define('REQUEST_START_POINT', '');
 
 define('AWESOME_APP_BASE_PATH', SITE_URL . REQUEST_START_POINT);
@@ -47,12 +49,13 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
 //Optional: Check for automatical release
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 /*********************** plugin-update-checker code end ***************************/
-
+\register_activation_hook( __FILE__, 'aw2\db_delta\create_awesome_tables' );
 
 
 
 require_once AWESOME_PATH.'/includes/util.php';
 require_once AWESOME_PATH.'/includes/aw2_library.php';
+require_once AWESOME_PATH.'/includes/error_log.php';
 
 require_once AWESOME_PATH.'/includes/awesome_flow.php';
 require_once AWESOME_PATH.'/includes/awesome_app.php';

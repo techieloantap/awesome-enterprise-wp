@@ -17,7 +17,7 @@ if (!defined('ENV_CACHE_KEY'))define('ENV_CACHE_KEY', 'env_cache-'.$table_prefix
 
 if (!defined('AWESOME_CORE_POST_TYPE'))define('AWESOME_CORE_POST_TYPE', 'awesome_core');
 if (!defined('AWESOME_APPS_POST_TYPE'))define('AWESOME_APPS_POST_TYPE', 'aw2_app');
-'env_cache'.$table_prefix.DB_NAME
+
 if (!defined('REQUEST_START_POINT'))define('REQUEST_START_POINT', '');
 
 define('AWESOME_APP_BASE_PATH', SITE_URL . REQUEST_START_POINT);

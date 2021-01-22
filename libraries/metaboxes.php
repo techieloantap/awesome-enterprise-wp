@@ -56,7 +56,7 @@ function awesome_custom_save_metabox( $post_id, $post){
 
       // Check permissions to edit pages and/or posts
      
-	  if ( !current_user_can( 'edit_page', $post_id ) || !current_user_can( 'edit_post', $post_id ))
+	  if ( !current_user_can( 'edit_pages', $post_id ) || !current_user_can( 'edit_posts', $post_id ))
 		return $post_id;
      
 

@@ -13,11 +13,15 @@ To use this plugin you will also need to install the Awesome Enterprise Framewor
 You will need to update the wp-config.php file with various defines specified in sample-config.php in the samples-index folder.
 
 
-### Changelog  
+### Changelog 
+ 
+##### 3.0.5 
+* Fixed: Required tables were not auto creating.
+* Fixed: PHP Notices & Warnings
 
 ##### 3.0.4  
 * Improved: Added support for better handling of errors & exceptions
-* Improved: required tables are auto created when plugin is activated.
+* Improved: Required tables are auto created when plugin is activated.
 
 ##### 3.0.3  
 * Improved: Added ability to export HTML modules for services to expose as an external package.

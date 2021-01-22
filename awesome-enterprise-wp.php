@@ -71,8 +71,7 @@ require_once __DIR__ .'/includes/app-rights.php';
 
 require_once __DIR__ .'/includes/monoframe.php';
 require_once __DIR__ .'/includes/wordpress-hooks.php';
-
-
+require_once __DIR__ .'/libraries/db-delta.php';
 
 
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'structure','lang','cache','session');

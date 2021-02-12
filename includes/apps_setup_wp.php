@@ -80,6 +80,21 @@ class apps_setup_wp{
 		}
 	}
 	
+	static function app_slug_rewrite($wp_rewrite) {
+    	
+		$rules = array();
+		
+		$registered_apps=&aw2_library::get_array_ref('apps');
+		foreach($registered_apps as $key => $app){
+			if(!isset($app['collection']['pages']['post_type']))
+				continue;
+			
+			$rules[$app['slug'] . '/?$'] = 'index.php?pagename=home&post_type='.$app['collection']['pages']['post_type'];
+		}	
+		
+		$wp_rewrite->rules = $rules + $wp_rewrite->rules;
+	
+	}
 		
 	static function fix_app_slug( $post_link, $post, $leavename ) {
  		//now apps show list show up in the menu to make it easy to add to nav menu

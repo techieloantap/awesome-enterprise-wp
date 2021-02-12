@@ -7,9 +7,8 @@ function rights_options_page($app) {
     $option_slug = 'awesome-app-' . $app['slug'];
     $options = get_option( $option_slug );
     
-    $tab = $_GET["tab"];
-    if(isset($tab)){
-        $active_tab = $tab;
+    if(isset($_GET["tab"])){
+        $active_tab = $_GET["tab"];
     }else{
         $active_tab = 'settings';
     }
@@ -18,7 +17,7 @@ function rights_options_page($app) {
         <div id="icon-options-general" class="icon32"></div>
         <h1><?php echo $app['name'] . ' Rights' ?></h1>
         <?php
-            if(1 == $options['enable_rights']){
+            if(is_array($options) && 1 == $options['enable_rights']){
                 $apppage = 'awesome-app-' . $app['slug'];
             ?>
             <h2 class="nav-tab-wrapper">
@@ -99,7 +98,7 @@ function showSinlgeAccess($option_slug){
 }
 
 function getModulelist($app){
-    $role = $_GET['role'];
+    $role = isset($_GET['role'])?$_GET['role']:false;
     if($role){
     ?>
     
@@ -236,7 +235,8 @@ function rights_settings_init() {
 
 function rightsFieldsValidation($newoptions){
     $options = get_option($_POST['page']);
-    
+    if( $options === false) $options=array();
+	
     if(isset($_POST['vsession_page'])){
         $options['enable_vsession'] = $newoptions['enable_vsession'];
         $options['vsession_key'] = $newoptions['vsession_key'];

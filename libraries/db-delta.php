@@ -10,7 +10,7 @@ function create_awesome_tables() {
 			"CREATE TABLE IF NOT EXISTS `awesome_exceptions` (
 				  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `created_date` timestamp NOT NULL DEFAULT current_timestamp(),
-				  `modified_date` timestamp NOT NULL DEFAULT current_timestamp(),
+				  `modified_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 				  `exception_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 				  `message` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
 				  `post_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -37,7 +37,9 @@ function create_awesome_tables() {
 				  `no_of_times` int(11) DEFAULT NULL,
 				  `status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
 				  PRIMARY KEY (`ID`),
-				  KEY `status` (`status`)
+				  KEY `status` (`status`),
+				  KEY `app_name` (`app_name`),
+				  KEY `exception_type` (`exception_type`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 			",
 

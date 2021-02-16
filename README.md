@@ -15,6 +15,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
  
+##### 3.0.6 
+* Fixed: PHP Notices & Warnings
+
 ##### 3.0.5 
 * Fixed: Required tables were not auto creating.
 * Fixed: PHP Notices & Warnings

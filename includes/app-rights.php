@@ -6,7 +6,17 @@ add_action( 'admin_init', 'rights_settings_init' );
 function rights_options_page($app) {
     $option_slug = 'awesome-app-' . $app['slug'];
     $options = get_option( $option_slug );
-    
+    if( $options === false) $options=array();
+	if(!isset($options['enable_single_access'])){
+		$options['enable_single_access']=0;
+	}	
+	if(!isset($options['enable_rights'])){
+		$options['enable_rights']=0;
+	}
+	if(!isset($options['enable_vsession'])){
+		$options['enable_vsession']=0;
+	}	
+	
     if(isset($_GET["tab"])){
         $active_tab = $_GET["tab"];
     }else{

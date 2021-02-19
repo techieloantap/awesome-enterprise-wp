@@ -339,12 +339,18 @@ function roles_callback( $option_slug ) {
     $all_roles = wp_roles()->get_names();
     if( $options === false) $options=array();
 	if(!isset($options['roles'])){
+		$options['roles']=array();
 		$options['roles']['enable']='';
 		$options['roles']['access']='';
 	}
 	
     foreach($all_roles as $key => $role){
         if($role == 'Administrator') continue;
+		if(!isset($options['roles'][$key])){
+			$options['roles'][$key]=array();
+			$options['roles'][$key]['enable']='';
+			$options['roles'][$key]['access']='';
+		}
         ?>
         <input type='checkbox' id="role-<?=$key?>" name='<?php echo $option_slug . '[role_' . $key . ']'?>' <?php checked( $options['roles'][$key]['enable'], 1 ); ?> value='1'>
         <label for='role-<?=$key?>'><?=$role?></label>

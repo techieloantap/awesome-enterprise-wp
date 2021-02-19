@@ -99,6 +99,7 @@ function showSinlgeAccess($option_slug){
 
 function getModulelist($app){
     $role = isset($_GET['role'])?$_GET['role']:false;
+	
     if($role){
     ?>
     
@@ -326,7 +327,11 @@ function unlogged_callback($option_slug){
 function roles_callback( $option_slug ) {
     $options = get_option( $option_slug );
     $all_roles = wp_roles()->get_names();
-    
+    if( $options === false) {
+		$options=array();
+		$options['roles']['enable']='';
+		$options['roles']['access']='';
+	}
     foreach($all_roles as $key => $role){
         if($role == 'Administrator') continue;
         ?>
@@ -343,7 +348,10 @@ function roles_callback( $option_slug ) {
 function single_access_roles_callback( $option_slug ) {
     $options = get_option( $option_slug );
     $all_roles = wp_roles()->get_names();
-    
+    if( $options === false) {
+		$options=array();
+		$options['single_access_roles']='';
+	}
     foreach($all_roles as $key => $role){
         if($role == 'Administrator') continue;
         ?>

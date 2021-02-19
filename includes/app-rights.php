@@ -267,6 +267,10 @@ function rightsFieldsValidation($newoptions){
 
 function enable_rights_callback($option_slug) {
     $options = get_option( $option_slug );
+	if( $options === false) {
+		$options=array();
+		$options['enable_rights']=0;
+	}	
     ?>
 	<input type='checkbox' name='<?= $option_slug;?>[enable_rights]' <?php checked( $options['enable_rights'], 1 ); ?> value='1'>
 	<?php
@@ -274,6 +278,10 @@ function enable_rights_callback($option_slug) {
 
 function enable_vsession_callback($option_slug){
     $options = get_option( $option_slug );
+	if( $options === false) {
+		$options=array();
+		$options['enable_vsession']=0;
+	}
     ?>
 	<input type='checkbox' name='<?= $option_slug;?>[enable_vsession]' <?php checked( $options['enable_vsession'], 1 ); ?> value='1'>
 	<?php
@@ -281,6 +289,10 @@ function enable_vsession_callback($option_slug){
 
 function enable_single_access_callback($option_slug){
     $options = get_option( $option_slug );
+	if( $options === false) {
+		$options=array();
+		$options['enable_single_access']=0;
+	}
     ?>
 	<input type='checkbox' name='<?= $option_slug;?>[enable_single_access]' <?php checked( $options['enable_single_access'], 1 ); ?> value='1'>
 	<?php
@@ -288,6 +300,10 @@ function enable_single_access_callback($option_slug){
 
 function vsession_key_callback($option_slug){
     $options = get_option( $option_slug );
+	if( $options === false) {
+		$options=array();
+		$options['vsession_key']='';
+	}
     ?>
     <input type='text' name='<?= $option_slug;?>[vsession_key]' placeholder='Email' value="<?= $options['vsession_key']?>">
 	<p class='description'>This key is used to check if user is vsession logged in or not. Set this key after user successfully logged in. default key is 'email'.</p>
@@ -296,6 +312,10 @@ function vsession_key_callback($option_slug){
 
 function unlogged_callback($option_slug){
     $options = get_option( $option_slug );
+	if( $options === false) {
+		$options=array();
+		$options['unlogged']='';
+	}
     ?>
     <code><?=site_url();?>/</code>
     <input type='text' name='<?= $option_slug;?>[unlogged]' value="<?= $options['unlogged']?>">

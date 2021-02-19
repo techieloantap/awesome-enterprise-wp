@@ -72,6 +72,9 @@ class awesome2_query{
 		
 		if($this->att('post_slug') && $this->att('post_type')){
 			aw2_library::get_post_from_slug($this->att('post_slug'),$this->att('post_type'),$post);
+			
+			if(empty($post)) return false;
+			
 			$post_id = $post->ID;
 		}
 		

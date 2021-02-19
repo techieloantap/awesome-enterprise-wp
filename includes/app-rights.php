@@ -268,8 +268,8 @@ function rightsFieldsValidation($newoptions){
 
 function enable_rights_callback($option_slug) {
     $options = get_option( $option_slug );
-	if( $options === false) {
-		$options=array();
+	if( $options === false) $options=array();
+	if(!isset($options['enable_rights'])){
 		$options['enable_rights']=0;
 	}	
     ?>
@@ -279,8 +279,8 @@ function enable_rights_callback($option_slug) {
 
 function enable_vsession_callback($option_slug){
     $options = get_option( $option_slug );
-	if( $options === false) {
-		$options=array();
+	if( $options === false) $options=array();
+	if(!isset($options['enable_vsession'])){
 		$options['enable_vsession']=0;
 	}
     ?>
@@ -290,8 +290,8 @@ function enable_vsession_callback($option_slug){
 
 function enable_single_access_callback($option_slug){
     $options = get_option( $option_slug );
-	if( $options === false) {
-		$options=array();
+	if( $options === false) $options=array();
+	if(!isset($options['enable_single_access'])){
 		$options['enable_single_access']=0;
 	}
     ?>
@@ -301,8 +301,8 @@ function enable_single_access_callback($option_slug){
 
 function vsession_key_callback($option_slug){
     $options = get_option( $option_slug );
-	if( $options === false) {
-		$options=array();
+	if( $options === false) $options=array();
+	if(!isset($options['vsession_key'])){
 		$options['vsession_key']='';
 	}
     ?>
@@ -313,8 +313,8 @@ function vsession_key_callback($option_slug){
 
 function unlogged_callback($option_slug){
     $options = get_option( $option_slug );
-	if( $options === false) {
-		$options=array();
+	if( $options === false) $options=array();
+	if(!isset($options['unlogged'])){
 		$options['unlogged']='';
 	}
     ?>
@@ -327,11 +327,12 @@ function unlogged_callback($option_slug){
 function roles_callback( $option_slug ) {
     $options = get_option( $option_slug );
     $all_roles = wp_roles()->get_names();
-    if( $options === false) {
-		$options=array();
+    if( $options === false) $options=array();
+	if(!isset($options['roles'])){
 		$options['roles']['enable']='';
 		$options['roles']['access']='';
 	}
+	
     foreach($all_roles as $key => $role){
         if($role == 'Administrator') continue;
         ?>
@@ -348,10 +349,11 @@ function roles_callback( $option_slug ) {
 function single_access_roles_callback( $option_slug ) {
     $options = get_option( $option_slug );
     $all_roles = wp_roles()->get_names();
-    if( $options === false) {
-		$options=array();
-		$options['single_access_roles']='';
+    if( $options === false) $options=array();
+	if(!isset($options['single_access_roles'])){
+		$options['single_access_roles'] = '';
 	}
+	
     foreach($all_roles as $key => $role){
         if($role == 'Administrator') continue;
         ?>

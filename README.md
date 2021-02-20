@@ -14,6 +14,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 
 ### Changelog 
+
+##### 3.0.7 
+* Fixed: More PHP Notices & Warnings
  
 ##### 3.0.6 
 * Fixed: PHP Notices & Warnings

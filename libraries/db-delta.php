@@ -100,6 +100,16 @@ function create_awesome_tables() {
 				KEY `subject` (`subject`),
 				KEY `tracking_set` (`tracking_set`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+			
+			"CREATE TABLE `usage_log` (
+			  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+			  `stamp` timestamp NOT NULL DEFAULT current_timestamp(),
+			  `post_type` text DEFAULT NULL,
+			  `module_slug` text DEFAULT NULL,
+			  `service` tinyint(4) NOT NULL DEFAULT 0,
+			  `count` bigint(20) NOT NULL DEFAULT 1,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
 		
 		];

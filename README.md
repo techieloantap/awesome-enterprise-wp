@@ -17,6 +17,7 @@ You will need to update the wp-config.php file with various defines specified in
 
 ##### 3.0.7 
 * Fixed: More PHP Notices & Warnings
+* Fixed: _edit_last meta key was not updating.
  
 ##### 3.0.6 
 * Fixed: PHP Notices & Warnings

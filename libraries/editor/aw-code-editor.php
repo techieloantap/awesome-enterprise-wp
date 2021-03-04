@@ -425,8 +425,9 @@ function awesome_save_postdata( $post_id ) {
 			// Update the post into the database
 			wp_update_post( $my_post );
 		}
+		update_post_meta( $post_id, '_edit_last', get_current_user_id() );
 		
-	aw2_library::get_module(["post_type"=>$_POST['post_type']],$_POST['post_name']);
+	 aw2_library::get_module(["post_type"=>$_POST['post_type']],$_POST['post_name']);
 	
 	  // re-hook this function
 	 add_action('save_post', 'awesome_save_postdata');

@@ -53,9 +53,10 @@ class aw2_menu{
 		echo '<div class="wrap" >'; 
 			echo '<h2>Awesome Enterprise</h2><hr>';
 			echo '<h3>Manage Awesome Cache</h3>';
-			echo "<a href='".$global_nonced_url."' class='page-title-action'>Purge Global Cache (Modules & Taxonomy etc)</a> <br /><br />"; //11       	
-			echo "<a href='".$nginx_nonced_url."' class='page-title-action'>Purge NGINX Cache</a> <br /><br />";
-			echo "<a href='".$session_nonced_url."' class='page-title-action'>Purge Session Cache (Search. OTP & self expiry)</a> <br /><br />";//12
+			echo '<div style="display:inline-block; width:33%;">';
+			echo "<p><a href='".$global_nonced_url."' class='page-title-action'>Purge Global Cache (Modules & Taxonomy etc)</a> </p>"; //11       	
+			echo "<p><a href='".$nginx_nonced_url."' class='page-title-action'>Purge NGINX Cache</a> </p>";
+			echo "<p><a href='".$session_nonced_url."' class='page-title-action'>Purge Session Cache (Search. OTP & self expiry)</a> </p>";//12
 			echo '
 			<div>
 			<form  action="'.wp_nonce_url(admin_url('admin.php?page=awesome-enterprise&awesome_purge=redis_cache'), 'redis_nonced-purge').'" method="post">
@@ -64,6 +65,14 @@ class aw2_menu{
 				<input type="submit" />
 			 </form>
 			 </div>';
+			echo '</div>
+				<div style="border-left:1px solid black;display:inline-block; width:33%;padding-left:15px">';
+				echo '
+					<p><strong>Redis Global DB: </strong>'. REDIS_DATABASE_GLOBAL_CACHE.'</p>
+					<p><strong>Redis Session DB: </strong>'. REDIS_DATABASE_SESSION_CACHE.'</p>
+					<p><strong>MySql DB: </strong>'. DB_NAME.'</p>
+				';
+			echo '</div>';	
 		echo '</div>';	
 		
 		echo '

@@ -35,6 +35,12 @@ class apps_setup_wp{
 		echo "<a href='".$global_nonced_url."' class='page-title-action'>Purge Global Cache (Modules & Taxonomy etc)</a> <br /><br />"; //11       	
 		echo "<a href='".$nginx_nonced_url."' class='page-title-action'>Purge NGINX Cache</a> <br /><br />";
 		echo "<a href='".$session_nonced_url."' class='page-title-action'>Purge Session Cache (Search. OTP & self expiry)</a> <br /><br />";//12
+		echo '<form  action="'.wp_nonce_url(admin_url('admin.php?page=awesome-studio-cache&awesome_purge=redis_cache'), 'redis_nonced-purge').'" method="post">
+				<label for="redis_db">Redis DB Number</label>
+				<input type="text" id="redis_db" name="redis_db" />
+				<input type="submit" />
+			 </form> ';
+		
 		echo '</div>';	
 	}
 	
@@ -62,6 +68,13 @@ class apps_setup_wp{
 				case 'session':
 					check_admin_referer( 'session_nonced-purge_all' );
 					\aw2\session_cache\flush(null,null,'');
+					break;
+				case 'redis_cache':
+					check_admin_referer( 'redis_nonced-purge' );
+					$redis_db = intval($_POST['redis_db']);
+
+					$redis = \aw2_library::redis_connect($redis_db);
+					$redis->flushdb();
 					break;
 			}
 			

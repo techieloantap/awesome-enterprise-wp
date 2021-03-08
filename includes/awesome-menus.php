@@ -39,7 +39,6 @@ class aw2_menu{
 				else
 					add_submenu_page('awesome-app-'.$app['slug'], $app['name'] . ' ' . $collection_name, $collection_name,  'develop_for_awesomeui','display_source.php?source='.$collection['source']);
 			}
-			//add_submenu_page('awesome-app-'.$app->slug, $app->name . ' config', 'Config',  'develop_for_awesomeui','post.php?post=' . $app->post_id . '&action=edit');
 		}
 		
 	}
@@ -51,15 +50,25 @@ class aw2_menu{
 		$global_nonced_url = wp_nonce_url( admin_url('admin.php?page=awesome-enterprise&awesome_purge=global'), 'global_nonced-purge_all' );
 		$session_nonced_url = wp_nonce_url(admin_url('admin.php?page=awesome-enterprise&awesome_purge=session'), 'session_nonced-purge_all' );
 		
-		echo '<div class="wrap" style="float: left; width: 100%;">'; 
+		echo '<div class="wrap" >'; 
 			echo '<h2>Awesome Enterprise</h2><hr>';
 			echo '<h3>Manage Awesome Cache</h3>';
 			echo "<a href='".$global_nonced_url."' class='page-title-action'>Purge Global Cache (Modules & Taxonomy etc)</a> <br /><br />"; //11       	
 			echo "<a href='".$nginx_nonced_url."' class='page-title-action'>Purge NGINX Cache</a> <br /><br />";
 			echo "<a href='".$session_nonced_url."' class='page-title-action'>Purge Session Cache (Search. OTP & self expiry)</a> <br /><br />";//12
+			echo '
+			<div>
+			<form  action="'.wp_nonce_url(admin_url('admin.php?page=awesome-enterprise&awesome_purge=redis_cache'), 'redis_nonced-purge').'" method="post">
+				<label for="redis_db">Redis DB Number</label>
+				<input type="text" id="redis_db" name="redis_db" />
+				<input type="submit" />
+			 </form>
+			 </div>';
 		echo '</div>';	
 		
-		echo '<div class="wrap" style="float: left; width: 100%;">';        	
+		echo '
+		<div class="clear"></div>
+		<div class="wrap" >';        	
 			echo '<h3>Services</h3>';			
 			//register services
 			$handlers=&aw2_library::get_array_ref('handlers');
@@ -69,7 +78,7 @@ class aw2_menu{
 				if(isset($handler['post_type']) && isset($handler['@service']) && $handler['@service'] === true ){
 					if(!isset($handler['service_label'])) continue;
 				
-					echo "<li style='float:left; width:33%;'>";
+					echo "<li style='display:inline-block; width:33%;'>";
 						echo "<a href='edit.php?post_type=".$handler['post_type']."'>".$handler['service_label']."</a>";
 					echo "</li>";
 				}
@@ -77,13 +86,15 @@ class aw2_menu{
 			echo "</ul>";
 		echo '</div>';
 		
-		echo '<div class="wrap" style="float: left; width: 100%;">'; 
+		echo '
+			<div class="clear"></div>
+			<div class="wrap" >'; 
 			echo '<h3>Awesome Apps</h3>';			
 			$registered_apps=&aw2_library::get_array_ref('apps');
 			ksort($registered_apps);			
 			echo "<ul class='inline'>";
 			foreach($registered_apps as $key => $app){
-				echo "<li style='float:left; width:33%;margin-bottom:15px;'>";
+				echo "<li style='display:inline-block; width:33%;margin-bottom:15px;'>";
 					echo "<a href='".$app['path']."'>".$app['name']."</a><br />";
 					if(!empty($app['collection']['modules']['post_type'])){
 						echo "<a href='edit.php?post_type=".$app['collection']['modules']['post_type']."'>Open Modules</a>";
@@ -135,8 +146,6 @@ class aw2_menu{
 		$menu_id = 'asf';
 		$wp_admin_bar->add_menu(array('id' => $menu_id, 'title' => 'Awesome Enterprise', 'href' => get_admin_url(null,'admin.php?page=awesome-enterprise')));
 		
-		//$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => 'Pages', 'id' => 'asf-pages', 'href' => get_admin_url(null,'edit.php?post_type=aw2_page'), 'meta' => array('target' => '_blank')));
-		//$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => 'Core', 'id' => 'asf-core', 'href' =>get_admin_url(null,'edit.php?post_type=aw2_core'), 'meta' => array('target' => '_blank')));
 	}
 
 

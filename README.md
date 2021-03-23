@@ -15,6 +15,11 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.0.8
+* Improved: Awesome Enterprise screen now shows the active Redis db number.
+* Improved: You can clean any Redis DB if you have the number.
+* Improved: Now "less-variables" module is used to register less variables.
+
 ##### 3.0.7 
 * Fixed: More PHP Notices & Warnings
 * Fixed: _edit_last meta key was not updating.

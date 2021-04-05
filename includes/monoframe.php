@@ -130,7 +130,7 @@ class Monoframe
 
 		// add the file extension to the array
 
-		$existing_mimes['svg'] = 'mime/type';
+		$existing_mimes['svg'] = 'image/svg+xml';
 
 		// call the modified list of extensions
 		return $existing_mimes;

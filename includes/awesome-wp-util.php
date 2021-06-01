@@ -51,7 +51,7 @@ static function the_content_filter($content){
 		}
 		$content = shortcode_unautop($content);
 		$content = prepend_attachment($content);
-		$content = wp_make_content_images_responsive($content);
+		$content = wp_filter_content_tags($content);
 		$content = str_replace(']]>', ']]&gt;', $content);
 		$content = $wp_embed->autoembed( $content );
 		

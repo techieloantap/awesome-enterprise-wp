@@ -19,6 +19,7 @@ You will need to update the wp-config.php file with various defines specified in
 * Improved: Awesome Enterprise screen now shows the active Redis db number.
 * Improved: You can clean any Redis DB if you have the number.
 * Improved: Now "less-variables" module is used to register less variables.
+* Fixed: Replaced the deprecated function 'wp_make_content_images_responsive' with wp_filter_content_tags, minimum wp version 5.5 required.
 
 ##### 3.0.7 
 * Fixed: More PHP Notices & Warnings

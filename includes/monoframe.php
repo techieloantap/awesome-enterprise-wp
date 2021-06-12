@@ -126,7 +126,7 @@ class Monoframe
 	<?php }
 	}
 
-	function upload_mimes ( $existing_mimes=array() ) {
+	function upload_mimes ( $existing_mimes ) {
 
 		// add the file extension to the array
 

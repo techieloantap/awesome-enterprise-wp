@@ -441,7 +441,7 @@ function awesome_custom_button(){
 			return ;
 		}
 		
-		//if ( Monoframe::is_awesome_post_type($post)) 
+		if ( Monoframe::is_awesome_post_type($post)) 
 		{
 			if ( in_array( $post->post_status, array('publish', 'future', 'private') ) && 0 != $post->ID ) {
 				echo "<div style='text-align:center;margin-bottom:10px;'><span id='uwrspin' class='spinner'></span><input type='button' class='button button-primary button-large' value='Update Without Refresh' id='update-no-refresh' onclick='save_aw_block()'></div>

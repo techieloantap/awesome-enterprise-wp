@@ -10,13 +10,12 @@ function image_resize($atts,$content=null,$shortcode){
 	
 	extract( \aw2_library::shortcode_atts(array(
 	'image_url' =>'',
-	'image_path' =>'',
 	'width' =>'',
 	'height' =>'',
 	'crop'=>'no'
 	), $atts ) );
 	
-	if(empty( $image_url ) && empty( $image_path )){
+	if(empty( $image_url )){
 		\aw2_library::set_error('one of image_url or image_path is required'); 
 		return '';
 	}
@@ -28,15 +27,14 @@ function image_resize($atts,$content=null,$shortcode){
 	
 	$image_found=false;
 	
-	if(!empty( $image_url )){
-		$image_path = parse_url( $image_url );
-		$image_path = ltrim( $image_path['path'], '/' );
-    	
-	}
 	
+	$image_path = parse_url( $image_url );
+	$image_path = ltrim( $image_path['path'], '/' );
+
+
     $orig_size = getimagesize( $image_path );
     
-    $image_src[0] = $image_url;
+	$image_src[0] = $image_url;    
     $image_src[1] = $orig_size[0];
     $image_src[2] = $orig_size[1];
 
@@ -87,6 +85,7 @@ function image_resize($atts,$content=null,$shortcode){
       
         $resized_img_url = str_replace( basename( $image_src[0] ), basename( $resized_img_path ), $image_src[0] );
 		$new_img_size = getimagesize( $resized_img_path );
+
         $vt_image = array (
           'url' => $resized_img_url,
           'width' => $new_img_size[0],
@@ -113,6 +112,7 @@ function image_resize($atts,$content=null,$shortcode){
 		
 		$new_img = str_replace( basename( $image_src[0] ), basename( $final_img_path ), $image_src[0] );
 		$new_img_size = getimagesize( $final_img_path );
+
 		// resized output
 		$vt_image = array (
 			'url' => $new_img,

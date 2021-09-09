@@ -16,7 +16,11 @@ class yoast_seo{
 		$registered_apps=&\aw2_library::get_array_ref('apps');
 		$remove_cpt_from_sitemap=array();
 		foreach($registered_apps as $key=>$app){
-			array_push($remove_cpt_from_sitemap,$app['collection']['pages']['post_type'],$app['collection']['posts']['post_type']);
+			if(isset($app['collection']['pages']))
+				array_push($remove_cpt_from_sitemap,$app['collection']['pages']['post_type']);
+			
+			if(isset($app['collection']['posts']))
+				array_push($app['collection']['posts']['post_type']);
 		}
 		if( in_array( $post_type, $remove_cpt_from_sitemap ) ) return true;
 	}

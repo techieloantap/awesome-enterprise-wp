@@ -4,17 +4,6 @@ add_action( 'save_post', 'awesome_save_postdata' );
 add_action( 'add_meta_boxes', 'awesome_add_custom_box' );
 add_action( 'post_submitbox_start', 'awesome_custom_button' );
 add_action('wp_ajax_codeeditor_update', 'awesome_save_without_refersh');
-add_action('edit_form_after_title','awesome_add_before_editor');
-
-
-function awesome_add_before_editor($post) {
-	global $post;
-	if(class_exists('Monoframe'))
-		return;
-			
-	do_meta_boxes(get_current_screen(), 'monoframe_pre_editor', $post);
-}
-
 
 function awesome_add_custom_box() {
 	$screens = Monoframe::get_awesome_post_type();

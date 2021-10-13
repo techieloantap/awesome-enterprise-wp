@@ -19,7 +19,7 @@ function add($atts,$content=null,$shortcode){
 	$tags_left = $shortcode['tags_left'];
 	
 	$public=true;
-	if(strtolower($tags_left[0])=='private')
+	if(isset($tags_left[0]) && strtolower($tags_left[0])=='private')
 		$public=false;
 /* 		
  \util::var_dump($shortcode);

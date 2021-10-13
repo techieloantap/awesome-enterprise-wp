@@ -8,10 +8,21 @@
 
 add_action( 'admin_menu', 'awesome_import_export::setup' );
 
-add_action( 'wp_ajax_awesome_export_xml', 'awesome_import_export::awesome_export_xml' );
+add_action( 'wp_ajax_awesome_export_code', 'awesome_import_export::awesome_export_code' );
+
+/**
+ * Registers our command when cli get's initialized.
+ *
+ */
+
+add_action( 'cli_init', 'awesome_import_export::register_cli_commands' );
 
 class awesome_import_export{
 	
+	static function register_cli_commands(){
+		WP_CLI::add_command( 'awesome-import', 'awesome_import_export' );
+	}
+		
 	static function setup(){
 		$import_export_page = add_submenu_page( 'tools.php', 'Export Awesome Apps', 'Export Awesome Apps',
     'develop_for_awesomeui', 'awesome-app-import-export', 'awesome_import_export::import_export_dashboard',3);
@@ -27,7 +38,7 @@ class awesome_import_export{
 	static function enqueue_admin_js(){
 		if (!wp_script_is( "ladda-spin", 'enqueued' )) {
 			wp_enqueue_script( 'ladda-spin', '//cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.9.4/spin.min.js', array(), '1.2.4' );
-		}
+		}  
 		if (!wp_script_is( 'ladda', 'enqueued' )) { 
 			wp_enqueue_script( 'ladda', '//cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.9.4/ladda.min.js', array(), '1.2.4' );
 		}
@@ -175,8 +186,16 @@ class awesome_import_export{
 			}		
 		echo'</ul>
 			</div>
+			<div class="fields">
+				<div class="label">
+					<label for="apps">Select Dates </label>
+				</div>
+				<div class="awe-input">
+					<p>Select dates between which all the posts will be selected</p>
+				</div>
 			</div>';
-		echo'<p class="awe-submit">
+		echo'<h4>Export As XML <small>(ideal for creating new app/service)</small></h4>
+			<p class="awe-submit">
 				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-selected" data-style="zoom-out" data-action="selected" data-file-slug="selective" data-format="xml">Export Selected </button>
 				<button type="submit" name="action" class="button ladda-button js-app-export-button" value="export-all" data-style="zoom-out" data-action="all" data-file-slug="all-awesome" data-format="xml">Export All</button>
 				<button type="submit" name="action" class="button ladda-button js-app-export-button" value="export-applist" data-style="zoom-out" data-action="applist" data-file-slug="applist" data-format="xml">Export only App list</button>
@@ -184,9 +203,12 @@ class awesome_import_export{
 				<button type="submit" name="action" class="button ladda-button js-app-export-button" value="export-services" data-style="zoom-out" data-action="services" data-file-slug="services" data-format="xml">Export All Service</button>
 				<button type="submit" name="action" class="button ladda-button js-app-export-button" value="export-apps" data-style="zoom-out" data-action="apps" data-file-slug="all-apps" data-format="xml">Export All Apps</button>
 			</p>';	
-		echo'<h4>Export As HTML</h4>
+		echo'<h4>Export As HTML <small>(ideal for migrating code between dev & prod)</small></h4>
 		     <p class="awe-submit">
-				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="selected" data-style="zoom-out" data-action="selected" data-file-slug="selective-html" data-format="html">Export Selected Services HTML</button>
+				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="selected" data-style="zoom-out" data-action="selected" data-file-slug="selective-html" data-format="html">Export Selected</button>
+				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-all" data-style="zoom-out" data-action="all" data-file-slug="all-html" data-format="html">Export All</button>
+				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-services" data-style="zoom-out" data-action="services" data-file-slug="selective-html" data-format="html">Export All Services</button>
+				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-apps" data-style="zoom-out" data-action="apps" data-file-slug="selective-html" data-format="html">Export All Apps</button>
 			</p>';
 		echo'</form>';
 		
@@ -194,7 +216,7 @@ class awesome_import_export{
 			</div>';	
 	}
 
-	static function awesome_export_xml(){
+	static function awesome_export_code(){
 		$output=array();
 		$output['status']="fail";
 		$file_slug = sanitize_text_field($_GET['file_slug']);
@@ -216,16 +238,153 @@ class awesome_import_export{
 		
 		$args=array();
 		$args['activity']=$activity;
-		$args['filename']=$file_slug.'-'.$sitename.date('Ymdhms').'.xml';
+		
 		
 		if($format === 'html' ) {
+			$args['filename']=$file_slug.'-'.$sitename;
 			awesome_export_html($args);
 		}
 		else if($format === 'xml' ) {
+			$args['filename']=$file_slug.'-'.$sitename.date('Ymdhms').'.xml';
 			awesome_export_wp($args);
 		}
 
 		wp_die();
 		
 	}
+	
+	/**
+     * Imports HTML code generated using Export Tool of Awesome Enterprise.
+     *
+     * ## OPTIONS
+     *
+     * 
+     * [--code-path=<absolute path>]
+     * : Absolute path to the directory where code is saved on the server.
+     * ---
+     *
+     * [--overwrite=<true|false>]
+     * : Set this to false if you don't want to overwirte the code while importing default is true.
+     * ---
+     * default: true
+     * options:
+     *   - true
+     *   - false
+     * ---
+     *
+     * ## EXAMPLES
+     *
+     *     wp awesome-import import_html --code-path='/var/www/codedump/' 
+     *     wp awesome-import import_html --code-path='/var/www/codedump/' --overwrite=false
+     *
+     * 
+     */
+	public function import_html( $args, $assoc_args ) {
+
+        // process arguments 
+		//wp awesome import_html --code-path='/var/www/codedump/' --overwrite=false 
+		$code_path = $assoc_args['code-path'] ;
+		$overwrite = $assoc_args['overwrite'] ;
+		
+		if(empty($overwrite) || $overwrite==='true')
+			$overwrite=true;
+		
+		WP_CLI::line('Importing Code From '. WP_CLI::colorize( '%B '. $code_path.'%n' ) );
+		//WP_CLI::line( 'Overwrite '.$overwrite );
+        // do cool stuff
+		$desired_posts_to_generate = 100;
+		if(!is_dir($code_path )){
+			WP_CLI::warning( 'Code Path '.$code_path.' not found.' );
+		}
+		
+		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($code_path));
+		$Regex = new RegexIterator($objects, '/^.+\.html$/i', RecursiveRegexIterator::GET_MATCH);
+		
+		$count= iterator_count($Regex);
+		unset($objects);
+		unset($Regex);
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Modules ', $count );
+		
+		$folders = glob($code_path . "/*",GLOB_ONLYDIR);
+			
+		foreach ($folders as $folder){
+			$files = glob($folder."/*.module.html");
+			$post_type=basename($folder);
+			//WP_CLI::line(WP_CLI::colorize( '%B Folder = '. $folder.'%n' ) );
+			//WP_CLI::line(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
+			foreach ($files as $filename){
+				$module=basename($filename);
+				$module=str_replace(".module.html","",$module);
+				//WP_CLI::line('module to import = '. $module );	
+				
+				// read the file 
+				$content= file_get_contents($filename, true);
+				
+				$my_post = array(
+					'post_content'  =>  $content
+				);
+				$my_post['post_type']= wp_unslash( sanitize_post_field( 'post_type', $post_type, 0, 'db' ) );
+				$my_post['post_title']= wp_unslash( sanitize_post_field( 'post_title', $module, 0, 'db' ) );
+				
+				//check if module exits or not
+				global $wpdb;
+				 $post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
+				// WP_CLI::line("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'" );
+				// WP_CLI::line(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
+				if(!empty($post_id)){
+					$my_post['ID']=$post_id;
+				} else {
+					$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
+					$my_post['post_status']='publish';
+					
+				}
+				
+				// Insert the post into the database.
+				$postid = wp_insert_post( $my_post );
+				//WP_CLI::line(WP_CLI::colorize( '%B 2ndpost_id = '. $postid.'%n' ) );
+				if(is_wp_error($postid)){
+					  WP_CLI::error( $postid->get_error_message() );
+				}
+				$progress->tick();
+			}
+		}
+		
+		/**
+		foreach (glob($code_path . "/*.module.html") as $filename)
+		{
+			$collection=array();
+			$collection['source']=$local_path."/modules";
+			$module=basename($filename);
+			$module=str_replace(".module.html","",$module);
+			$template=null;
+
+			
+		}
+		**/
+		
+		/**
+		for ( $i = 0; $i < $desired_posts_to_generate; $i++ ) {
+			//https://stackoverflow.com/questions/17617858/wordpress-wp-insert-post-wp-update-post
+			// Code used to generate a post.
+			$my_post = array(
+				'post_title'  =>  'X ' . ($i + 1),
+				'post_status' => 'publish',
+				'post_author' => 5,
+				'post_type'   => 'post',
+				'tags_input'  => [ 'generated' ],
+				'meta_input'  => $assoc_args, // Simply passes all key value pairs to posts generated that can be used in testing.
+			);
+
+			// Insert the post into the database.
+			//wp_insert_post( $my_post );
+
+			
+		}**/
+
+		$progress->finish();
+		
+        // give output
+        WP_CLI::success( $count. ' modules imported!' ); // Prepends Success to message
+
+    }
 }

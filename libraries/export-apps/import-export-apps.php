@@ -259,10 +259,10 @@ class awesome_import_export{
      * ## OPTIONS
      *
      * 
-     * [--code-path=<absolute path>]
+     * [--code-path=<absolute_path>]
      * : Absolute path to the directory where code is saved on the server.
      * ---
-     *
+     * ---
      * [--overwrite=<true|false>]
      * : Set this to false if you don't want to overwirte the code while importing default is true.
      * ---
@@ -282,7 +282,6 @@ class awesome_import_export{
 	public function import_html( $args, $assoc_args ) {
 
         // process arguments 
-		//wp awesome import_html --code-path='/var/www/codedump/' --overwrite=false 
 		$code_path = $assoc_args['code-path'] ;
 		$overwrite = $assoc_args['overwrite'] ;
 		
@@ -290,11 +289,10 @@ class awesome_import_export{
 			$overwrite=true;
 		
 		WP_CLI::line('Importing Code From '. WP_CLI::colorize( '%B '. $code_path.'%n' ) );
-		//WP_CLI::line( 'Overwrite '.$overwrite );
-        // do cool stuff
-		$desired_posts_to_generate = 100;
+
 		if(!is_dir($code_path )){
 			WP_CLI::warning( 'Code Path '.$code_path.' not found.' );
+			WP_CLI::halt( 200 );
 		}
 		
 		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($code_path));
@@ -310,12 +308,11 @@ class awesome_import_export{
 		foreach ($folders as $folder){
 			$files = glob($folder."/*.module.html");
 			$post_type=basename($folder);
-			//WP_CLI::line(WP_CLI::colorize( '%B Folder = '. $folder.'%n' ) );
-			//WP_CLI::line(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
+			WP_CLI::debug(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
 			foreach ($files as $filename){
 				$module=basename($filename);
 				$module=str_replace(".module.html","",$module);
-				//WP_CLI::line('module to import = '. $module );	
+				WP_CLI::debug('module to import = '. $module );	
 				
 				// read the file 
 				$content= file_get_contents($filename, true);
@@ -329,9 +326,13 @@ class awesome_import_export{
 				//check if module exits or not
 				global $wpdb;
 				 $post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
-				// WP_CLI::line("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'" );
-				// WP_CLI::line(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
+				
+				WP_CLI::debug(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
 				if(!empty($post_id)){
+					if($overwrite !== true){
+						$progress->tick();
+						continue;
+					}
 					$my_post['ID']=$post_id;
 				} else {
 					$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
@@ -341,45 +342,12 @@ class awesome_import_export{
 				
 				// Insert the post into the database.
 				$postid = wp_insert_post( $my_post );
-				//WP_CLI::line(WP_CLI::colorize( '%B 2ndpost_id = '. $postid.'%n' ) );
 				if(is_wp_error($postid)){
 					  WP_CLI::error( $postid->get_error_message() );
 				}
 				$progress->tick();
 			}
 		}
-		
-		/**
-		foreach (glob($code_path . "/*.module.html") as $filename)
-		{
-			$collection=array();
-			$collection['source']=$local_path."/modules";
-			$module=basename($filename);
-			$module=str_replace(".module.html","",$module);
-			$template=null;
-
-			
-		}
-		**/
-		
-		/**
-		for ( $i = 0; $i < $desired_posts_to_generate; $i++ ) {
-			//https://stackoverflow.com/questions/17617858/wordpress-wp-insert-post-wp-update-post
-			// Code used to generate a post.
-			$my_post = array(
-				'post_title'  =>  'X ' . ($i + 1),
-				'post_status' => 'publish',
-				'post_author' => 5,
-				'post_type'   => 'post',
-				'tags_input'  => [ 'generated' ],
-				'meta_input'  => $assoc_args, // Simply passes all key value pairs to posts generated that can be used in testing.
-			);
-
-			// Insert the post into the database.
-			//wp_insert_post( $my_post );
-
-			
-		}**/
 
 		$progress->finish();
 		

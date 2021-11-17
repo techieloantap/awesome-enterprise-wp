@@ -78,7 +78,7 @@ aw2_library::load_handlers_from_path(HANDLERS_PATH,'structure','lang','cache','s
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'utils');
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'database');
 aw2_library::load_handlers_from_path(HANDLERS_PATH,'front-end');
-aw2_library::load_handlers_from_path(HANDLERS_PATH,'controllers');
+aw2_library::load_handlers_from_path(HANDLERS_PATH,'controllers','connectors');
 
 aw2_library::load_handlers_from_path(WP_HANDLERS_PATH,'wp');
 aw2_library::load_all_extra_handlers();

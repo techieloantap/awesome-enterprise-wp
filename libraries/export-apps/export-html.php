@@ -22,7 +22,13 @@ function awesome_export_html( $args = array() ) {
 
 	$post_types = array();
 	
+	$base_export_folder='code-export';
+	
 	switch($args['activity']){
+		case "all":
+			$post_types = Monoframe::get_awesome_post_type();
+			$post_types=array_unique($post_types);
+			break;
 	
 		case "selected":
 			if(isset($_REQUEST['services'])){
@@ -30,7 +36,54 @@ function awesome_export_html( $args = array() ) {
 					$post_types[]=$service;
 				}
 			}
+				
+			if(isset($_REQUEST['apps'])){
+				$registered_apps=&aw2_library::get_array_ref('apps');
+				
+				foreach($_REQUEST['apps'] as $selected_app){
+					if(isset($registered_apps[$selected_app])){
+						foreach($registered_apps[$selected_app]['collection'] as $collection_name => $collection){
+							if($collection_name == 'posts')
+								continue;
+							if(isset($collection['post_type']))
+							$post_types[]=$collection['post_type'];
+						}
+					}
+					
+				}
+			}
 			break;
+			
+		case "services":
+			$handlers=&aw2_library::get_array_ref('handlers');
+		
+			foreach($handlers as $key => $handler){
+				if(!isset($handler['post_type']))
+					continue;
+				
+				if('awesome_core' == $handler['post_type'])
+					continue;
+				
+				if(isset($handler['service']) && strtolower($handler['service']) === 'yes'){
+					$post_types[] =  $handler['post_type'];
+				} 
+				elseif(isset($handler['@service']) && $handler['@service'] === true){
+					$post_types[] =  $handler['post_type'];
+				}	
+			}	
+			break;
+		case "apps":
+				
+			$registered_apps=&aw2_library::get_array_ref('apps');
+			foreach ($registered_apps as $app){
+				
+				foreach($app['collection'] as $collection_name => $collection){
+					if($collection_name == 'posts')
+						continue;
+					if(isset($collection['post_type']))
+					$post_types[]=$collection['post_type'];
+				}
+			}
 	}
 
 	$esses      = array_fill( 0, count( $post_types ), '%s' );
@@ -72,7 +125,10 @@ function awesome_export_html( $args = array() ) {
 		$wp_query->in_the_loop = true;
 		
 		$base_path=dirname(ABSPATH);
-	
+		$date_folder = date('Ymd-His');
+		$collection_base_directory= $base_path . '/'.$base_export_folder.'/'. $date_folder . '/';
+		$module_list=array();
+		
 		// Fetch 20 posts at a time rather than loading the entire table into memory.
 		while ( $next_posts = array_splice( $post_ids, 0, 20 ) ) {
 			$where = 'WHERE ID IN (' . join( ',', $next_posts ) . ')';
@@ -81,14 +137,35 @@ function awesome_export_html( $args = array() ) {
 			// Begin Loop.
 			
 			foreach ( $posts as $post ) {
-				$collection_directory= $base_path . '/' . $post->post_type;
+				$collection_directory = $collection_base_directory. $post->post_type;
 				if (!file_exists($collection_directory)) {
 					mkdir($collection_directory, 0777, true);
 				}
 				setup_postdata( $post );
 				$file = $collection_directory . '/' . $post->post_name . '.module.html';
 				file_put_contents($file,$post->post_content);
+				$module_list[$post->post_type]['modules'][]= $post->post_name;
 			}
 		}	
+
+		foreach($post_types as $post_type){
+			if(isset($module_list[$post_type])){
+				$collection_directory = $collection_base_directory. $post_type;
+				$file = $collection_directory . '/modules.json'; 
+				$module_json = json_encode($module_list[$post_type]);
+				file_put_contents($file,$module_json );
+			}
+		}
+		
+		$file_name = $args['filename'].$date_folder.'.tar.gz';
+		//now let's zip and then force download
+		$cmd='tar -zcf '.$base_path . '/'.$base_export_folder.'/'.$file_name.'  -C '.$base_path . '/'.$base_export_folder.'/'.' '.$date_folder;
+		//echo $cmd;
+		shell_exec($cmd);
+		
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Disposition: attachment; filename=' . $file_name );
+		header( 'Content-Type: application/octet-stream; charset=' . get_option( 'blog_charset' ), true );
+		echo file_get_contents($base_path . '/'.$base_export_folder.'/'.$file_name);
 	}
 }

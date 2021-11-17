@@ -22,7 +22,7 @@ var import_export={};
 		if(action=='selected'){
 			selected_items = jQuery(".export form").serialize();
 		}	
-		url=ajaxurl+'?action=awesome_export_xml&activity='+action+'&format='+format+'&file_slug='+file_slug+'&'+selected_items;
+		url=ajaxurl+'?action=awesome_export_code&activity='+action+'&format='+format+'&file_slug='+file_slug+'&'+selected_items;
 		ladda.stop();	
 		window.location.href = url;
 		

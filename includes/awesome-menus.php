@@ -69,7 +69,18 @@ class aw2_menu{
 				<div style="border-left:1px solid black;display:inline-block; width:33%;padding-left:15px">';
 				echo '
 					<p><strong>Redis Global DB: </strong>'. REDIS_DATABASE_GLOBAL_CACHE.'</p>
-					<p><strong>Redis Session DB: </strong>'. REDIS_DATABASE_SESSION_CACHE.'</p>
+					<p><strong>Redis Session DB: </strong>'. REDIS_DATABASE_SESSION_CACHE.'</p>';
+				if(defined('CONNECTIONS')){
+					foreach(CONNECTIONS as $key=>$value){
+						if(isset($value['redis_db'])){
+							echo '<p><strong>'.$key.' Redis DB: </strong>'. $value['redis_db'].'</p>';
+						}
+					}
+				}
+				else{
+					echo'<p>NO CONNECTION</p>';
+				}	
+				echo'
 					<p><strong>MySql DB: </strong>'. DB_NAME.'</p>
 				';
 			echo '</div>';	

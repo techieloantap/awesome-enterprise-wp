@@ -128,6 +128,7 @@ function awesome_export_html( $args = array() ) {
 		$date_folder = date('Ymd-His');
 		$collection_base_directory= $base_path . '/'.$base_export_folder.'/'. $date_folder . '/';
 		$module_list=array();
+		$settings_list=array();
 		
 		// Fetch 20 posts at a time rather than loading the entire table into memory.
 		while ( $next_posts = array_splice( $post_ids, 0, 20 ) ) {
@@ -145,15 +146,35 @@ function awesome_export_html( $args = array() ) {
 				$file = $collection_directory . '/' . $post->post_name . '.module.html';
 				file_put_contents($file,$post->post_content);
 				$module_list[$post->post_type]['modules'][]= $post->post_name;
+				
+				if($post->post_name==='settings'){
+					$settings_list[$post->post_type]= $post->ID;
+				}
 			}
 		}	
 
 		foreach($post_types as $post_type){
+			//create modules list
 			if(isset($module_list[$post_type])){
 				$collection_directory = $collection_base_directory. $post_type;
 				$file = $collection_directory . '/modules.json'; 
 				$module_json = json_encode($module_list[$post_type]);
 				file_put_contents($file,$module_json );
+			}
+			
+			//create default settings json
+			if(isset($settings_list[$post_type])){
+				$collection_directory = $collection_base_directory. $post_type;
+				$file = $collection_directory . '/settings.json'; 
+				
+				$sql="select meta_key,meta_value from  wp_postmeta  where post_id='" . $settings_list[$post_type] . "'";
+				$results =aw2_library::get_results($sql);
+				
+				foreach($results as $result){
+					$settings_json[$result['meta_key']]=$result['meta_value'];
+				}
+				$settings_json = json_encode($settings_json);
+				file_put_contents($file,$settings_json );
 			}
 		}
 		

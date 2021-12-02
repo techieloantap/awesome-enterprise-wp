@@ -20,7 +20,7 @@ class yoast_seo{
 				array_push($remove_cpt_from_sitemap,$app['collection']['pages']['post_type']);
 			
 			if(isset($app['collection']['posts']))
-				array_push($app['collection']['posts']['post_type']);
+				array_push($remove_cpt_from_sitemap,$app['collection']['posts']['post_type']);
 		}
 		if( in_array( $post_type, $remove_cpt_from_sitemap ) ) return true;
 	}

@@ -28,4 +28,4 @@ Upload the Awesome Enterprise plugin to your website, Activate it.
 
 = Where can I find documentation? =
 You can find the documentation and tutorials at 
-https://getawesomestudio.com/
+https://awxdocs.com/

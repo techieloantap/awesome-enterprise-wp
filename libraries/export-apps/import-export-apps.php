@@ -9,6 +9,8 @@
 add_action( 'admin_menu', 'awesome_import_export::setup' );
 
 add_action( 'wp_ajax_awesome_export_code', 'awesome_import_export::awesome_export_code' );
+add_action( 'wp_ajax_awesome_import_gt_code', 'awesome_import_export::awesome_import_gt_code' );
+add_action( 'wp_ajax_awesome_import_single_block', 'awesome_import_export::awesome_import_single_block' );
 
 /**
  * Registers our command when cli get's initialized.
@@ -27,8 +29,11 @@ class awesome_import_export{
 		$import_export_page = add_submenu_page( 'tools.php', 'Export Awesome Apps', 'Export Awesome Apps',
     'develop_for_awesomeui', 'awesome-app-import-export', 'awesome_import_export::import_export_dashboard',3);
 		add_action( 'load-' . $import_export_page, 'awesome_import_export::load_js' );
+
+		$import_page = add_submenu_page( 'tools.php', 'Import Awesome GT Blocks', 'Import Awesome GT Blocks',
+    'develop_for_awesomeui', 'awesome-gt-block-import', 'awesome_import_export::import_gtblocks_dashboard',3);
+		add_action( 'load-' . $import_page, 'awesome_import_export::load_js' );
 	
-		add_action( 'load-' . $import_export_page, 'awesome_import_export::load_js' );
 	}
 	
 	static function load_js(){
@@ -56,6 +61,33 @@ class awesome_import_export{
 		echo '<div class="wrap ">';        	
 		echo '<h2 class="hndle">Export Awesome Apps & Services</h2>';
 		self::export_panel();
+		echo '</div>';		 
+	}
+	
+	static function import_gtblocks_dashboard(){
+		$page = sanitize_text_field($_REQUEST['page']);
+		$tab_url=menu_page_url( $page ,false );	
+		
+		echo '<div class="wrap ">';        	
+		echo '<h2 class="hndle">Import Awesome GT Blocks</h2>';
+		//show the input fields for file upload
+		?>
+		<div class="narrow"><p>Howdy! Upload your Awesome GT Blocks collection xml file.</p><p>Choose a .xml file to upload, then click Upload file and import.</p><form enctype="multipart/form-data" id="gt-import-form" method="post" class="wp-upload-form">
+<p>
+		<label for="upload-gt-block">Choose a file from your computer:</label> <input type="file" id="upload-gt-block" name="import-gt-block" size="25">
+<input type="hidden" name="action" value="save">
+</p>
+		<p class="submit"><input type="button" name="submit" id="submit" class="button ladda-button js-import-blocks button-primary" value="Upload file and import blocks" data-style="zoom-out"></p></form>
+		
+		<div class='js-status-response'></div>
+		</div>
+		<?php 
+
+		//upload using ajax
+
+		//wait
+
+		
 		echo '</div>';		 
 	}
 	
@@ -253,6 +285,128 @@ class awesome_import_export{
 		
 	}
 	
+	static function awesome_import_gt_code(){
+		//got the xml file, let break it so that we can do multiple imports
+		$filename = $_FILES['file']['name'];
+
+		$upload_dir   = wp_upload_dir();
+		$location = $upload_dir['path'].'/'.$filename;
+
+		if(move_uploaded_file($_FILES['file']['tmp_name'], $location)){
+		
+			$objXmlDocument = simplexml_load_file($location);
+
+			if ($objXmlDocument === FALSE) {
+				$block_output['status']='failed';
+				$block_output['message']='There were errors parsing the XML file.\n';
+				foreach(libxml_get_errors() as $error) {
+					$block_output['message'] .= $error->message;
+				}
+				
+				echo json_encode($block_output);
+				exit;
+			}
+
+			$objJsonDocument = json_encode($objXmlDocument);
+			$arrOutput = json_decode($objJsonDocument, TRUE);
+
+			$ticket = \aw2\session_ticket\create([],null,null);
+			\aw2\session_ticket\set(["main"=>$ticket,"field"=>'xml_json',"value"=>$objJsonDocument],null,null);
+			
+			unset($objJsonDocument);
+			unset($objXmlDocument);
+			$block_output = array();
+				// 	save this json data to ticket
+				// create a count 
+				// a json object	
+				// loop thought and send another reqesut to import one item at at time and when final response is avialble flush the cahce and delete the ticket
+			/* {
+					status: success/failed
+					no_of_blocks: 50
+					ticket_id:
+					blocks: [{
+						item_position:0
+						item_title:twee
+					},{
+						item_position:1
+						item_title:twee
+					}]
+
+				 }*/
+			$block_output['status']='success';	
+			$block_output['ticket_id']=$ticket; 
+			$block_output['no_of_blocks']=count($arrOutput['gtblock']); 
+			$block_output['blocks']=array(); 
+
+			foreach($arrOutput['gtblock'] as $key=>$block_item){
+				$block_output['blocks'][]=array(
+					"item_position"=>$key,
+					"item_title"=>$block_item['title']
+				);
+			}
+			
+		 }else{
+
+			$block_output['status']='failed';
+			$block_output['message']='error: uploading file - try again';
+		 }
+		 unlink($location);
+		 echo json_encode($block_output);
+		 wp_die();
+	}
+
+	static function awesome_import_single_block(){
+		$xml_json = \aw2\session_ticket\get(["main"=>$_REQUEST['ticket_id'],"field"=>'xml_json'],null,null);
+		$arrOutput = json_decode($xml_json, TRUE);
+
+		$item = $arrOutput['gtblock'][$_REQUEST['item_position']];
+		if(is_array($item)){
+			//update post
+			//$gt_post= get_page_by_path( 'gutenberg-blocks', OBJECT, AWESOME_CORE_POST_TYPE );
+			$args = array(
+				'name'        => 'gutenberg-blocks',
+				'post_type'   => AWESOME_CORE_POST_TYPE,
+				'post_status' => 'publish',
+				'numberposts' => 1
+			  );
+			$my_posts = get_posts($args);
+			  
+			$gt_post=$my_posts[0];
+			unset($my_posts);
+			if($gt_post){
+				$content=$gt_post->post_content ." \r\n ". $item['registration_code'];
+				$post_arr= array('ID'=>$gt_post->ID, 'post_content'=>$content);
+				wp_update_post($post_arr);
+				
+			} else {
+				$user_id=get_current_user_id();
+				$post_arr= array('post_title'=>'gutenberg-blocks',
+								'post_status'=>'publish',
+								'post_author'=>$user_id,
+								'post_type'=>AWESOME_CORE_POST_TYPE ,
+								'post_content'=>$item['registration_code']);
+				wp_insert_post($post_arr);				
+			}
+
+			
+			
+			//\aw2\global_cache\flush(null,null,null);
+									
+			if(!empty($item['acf_code'])){
+				$field_groups = json_decode($item['acf_code'],true);
+				$result = acf_import_field_group($field_groups[0]);
+			}
+
+			$data['status']='success';
+			$data['title']=$item['title'];
+		} else {
+			$data['status']='failed';
+			$data['title']=$_REQUEST['item_title'];
+		}
+		
+		echo json_encode($data);
+		wp_die();
+	}
 	/**
      * Imports HTML code generated using Export Tool of Awesome Enterprise.
      *

@@ -25,7 +25,7 @@ function rights_options_page($app) {
     ?>
     <div id='rights-wrapper' class="wrap">
         <div id="icon-options-general" class="icon32"></div>
-        <h1><?php echo $app['name'] . ' Rights' ?></h1>
+        <h1><?php echo $app['name'] . ' Rights'; ?></h1>
         <?php
             if(is_array($options) && 1 == $options['enable_rights']){
                 $apppage = 'awesome-app-' . $app['slug'];
@@ -118,12 +118,18 @@ function getModulelist($app){
 
         <form method="post">
             <input type="hidden" name="rights_table" value="true">
-
             <?php
-                $list_table = new wp_posts();
-                $list_table->prepare_items('m_' . $app['slug']);
-                $list_table->search_box( 'search', 'search_id' );
-                $list_table->display();
+               if(isset($app['collection']['modules'])){
+					$module_post_type=$app['collection']['modules']['post_type'];
+					$list_table = new wp_posts();
+				
+					$list_table->prepare_items($module_post_type);
+					$list_table->search_box( 'search', 'search_id' );
+					$list_table->display();
+				}
+				else {
+					_e( '<p>'.$app['name'].' does not have list of modules.</p>', 'awesome' );
+				}
             ?>
         </form>
     </div>
@@ -145,7 +151,7 @@ function getModulelist($app){
             <?php
         }
         if(!$has_role_buttons){
-            echo "<p>Please select at least 1 restricted role in the settings section</p>";
+            _e( '<p>'.$app['name'].' does not have list of modules.</p>', 'awesome' );
         }
     }
 }

@@ -15,6 +15,15 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.0
+* Improved: In connectors to enable service execution from folder, external DB and CDN.
+* Improved: Added ability to export apps code as html
+* Improved: Added wp-cli command to import codes exported via 'Export As HTML' using command `wp awesome-import import_html --code-path='/var/import-code/20211013-105631' --overwrite=false`
+* Improved: updated the awesome enterprise screen to show Redis DB used by various connections
+* Fixed: A notice while registering post types using post_types shortcode
+* Fixed: Date issue caused sitemap.xml file giving errors in goolge console for yoast
+* Fixed: Module list for Apps were not visible in case of external Apps.
+
 ##### 3.0.8
 * Improved: Awesome Enterprise screen now shows the active Redis db number.
 * Improved: You can clean any Redis DB if you have the number.

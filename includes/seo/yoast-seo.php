@@ -20,7 +20,7 @@ class yoast_seo{
 				array_push($remove_cpt_from_sitemap,$app['collection']['pages']['post_type']);
 			
 			if(isset($app['collection']['posts']))
-				array_push($app['collection']['posts']['post_type']);
+				array_push($remove_cpt_from_sitemap,$app['collection']['posts']['post_type']);
 		}
 		if( in_array( $post_type, $remove_cpt_from_sitemap ) ) return true;
 	}
@@ -32,7 +32,7 @@ class yoast_seo{
 		$sql  = $wpdb->prepare(" SELECT MAX(p.post_modified_gmt) AS lastmod
 						FROM	$wpdb->posts AS p
 						WHERE post_status IN ('publish') AND post_type = %s ", 'aw2_app' );
-		$mod = $wpdb->get_var( $sql )." +00:00";
+		$mod = $wpdb->get_var( $sql )."+00:00";
 				
 		//$date = $wpseo_sitemaps->get_last_modified('aw2_app');
 		//if(!class_exists(WPSEO_Date_Helper)){

@@ -15,6 +15,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.1
+* Improved: Added ability to import GT Blocks from awxdocs.com site
+
 ##### 3.1.0
 * Improved: In connectors to enable service execution from folder, external DB and CDN.
 * Improved: Added ability to export apps code as html

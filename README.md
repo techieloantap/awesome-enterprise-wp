@@ -16,7 +16,7 @@ You will need to update the wp-config.php file with various defines specified in
 ### Changelog 
 
 ##### 3.1.1
-* Improved: Added ability to import GT Blocks from awxdocs.com site
+* Improved: Added ability to import GT Blocks from awxdocs.com site, to do that goto admin menu **__tools->import awesome gt blocks__**
 
 ##### 3.1.0
 * Improved: In connectors to enable service execution from folder, external DB and CDN.

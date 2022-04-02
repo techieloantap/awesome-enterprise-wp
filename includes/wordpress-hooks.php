@@ -16,3 +16,4 @@
 	add_action('wp_footer', 'awesome_flow::footer');
 	add_filter( 'nav_menu_css_class', 'apps_setup_wp::nav_menu_css_class', 10, 3 );
 	
+	add_action('wp_login', 'awesome_auth::wp_vession_login',10, 2);

@@ -15,6 +15,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.2
+* Improved: Added support for using wp user as the virtual user
+
 ##### 3.1.1
 * Improved: Added ability to import GT Blocks from awxdocs.com site, to do that goto admin menu **__tools->import awesome gt blocks__**
 

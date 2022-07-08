@@ -41,6 +41,7 @@ function image_resize($atts,$content=null,$shortcode){
 	if (!$image_path) {
 		return array(
 		  'url' => '#',
+		  'path' => '',
 		  'width' => -1,
 		  'height' => -1
 		);
@@ -49,6 +50,7 @@ function image_resize($atts,$content=null,$shortcode){
 	// default output - without resizing
 	$vt_image = array (
 		'url' => $image_src[0],
+		'path' => '',
 		'width' => $image_src[1],
 		'height' => $image_src[2]
 	);
@@ -66,6 +68,7 @@ function image_resize($atts,$content=null,$shortcode){
       
       $vt_image = array (
         'url' => $cropped_img_url,
+		'path' => $cropped_img_path,
         'width' => $width,
         'height' => $height
       );
@@ -88,6 +91,7 @@ function image_resize($atts,$content=null,$shortcode){
 
         $vt_image = array (
           'url' => $resized_img_url,
+		  'path' => $resized_img_path,
           'width' => $new_img_size[0],
           'height' => $new_img_size[1]
         );
@@ -116,6 +120,7 @@ function image_resize($atts,$content=null,$shortcode){
 		// resized output
 		$vt_image = array (
 			'url' => $new_img,
+			'path' => $final_img_path,
 			'width' => $new_img_size[0],
 			'height' => $new_img_size[1]
 		);

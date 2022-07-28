@@ -15,6 +15,11 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.3
+* Improved: Added ability to show preview images for Awesome Gutenberg blocks
+* Improved: Added new category "Awesome UI Blocks" in the list of Gutenberg blocks
+* Fixed: awesome_core was hard coded in the export module, we softcoded it 
+
 ##### 3.1.2
 * Improved: Added support for using wp user as the virtual user
 

@@ -86,13 +86,22 @@ class awesome2_acfblock{
 	function render_callback($block, $content = '', $is_preview = false, $post_id = 0){
 
 		$result='service handler not set';
-		if(isset($block['service_handler']) && !empty($block['service_handler'])){
+
+		if($is_preview){
+				
+			if(isset($block['data']['preview_image']))	
+				$result="<img src='".$block['data']['preview_image']."' style='width:100%; height:auto;'>";	
+			else
+				$result="<img src='https://awxdocs.com/wp-content/uploads/2021/06/gAW-logo-Enterprise-1.svg' style='width:100%; height:auto;'>";
+		}
+		else if(isset($block['service_handler']) && !empty($block['service_handler'])){
 			// convert name ("acf/testimonial") into path friendly slug ("testimonial")
 			$slug = str_replace('acf/', '', $block['name']);
 			$block['slug_name']=$slug;
 			$result=\aw2_library::service_run($block['service_handler'],$block,null,'service');
 			
-		 }
+		}
+		
 		
 		echo $result;
 	}

@@ -61,7 +61,7 @@ function awesome_export_html( $args = array() ) {
 				if(!isset($handler['post_type']))
 					continue;
 				
-				if('awesome_core' == $handler['post_type'])
+				if(AWESOME_CORE_POST_TYPE == $handler['post_type'])
 					continue;
 				
 				if(isset($handler['service']) && strtolower($handler['service']) === 'yes'){

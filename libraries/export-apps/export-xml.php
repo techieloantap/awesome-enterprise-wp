@@ -109,7 +109,7 @@ function awesome_export_wp( $args = array() ) {
 		
 			break;
 		case "core":
-			$post_types = array('awesome_core');
+			$post_types = array(AWESOME_CORE_POST_TYPE);
 			break;
 		case "applist":
 			$post_types = array('aw2_app');
@@ -121,7 +121,7 @@ function awesome_export_wp( $args = array() ) {
 				if(!isset($handler['post_type']))
 					continue;
 				
-				if('awesome_core' == $handler['post_type'])
+				if(AWESOME_CORE_POST_TYPE == $handler['post_type'])
 					continue;
 				
 				if(isset($handler['service']) && strtolower($handler['service']) === 'yes'){

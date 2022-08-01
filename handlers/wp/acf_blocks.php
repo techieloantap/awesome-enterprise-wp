@@ -87,7 +87,7 @@ class awesome2_acfblock{
 
 		$result='service handler not set';
 
-		if($is_preview){
+		if($is_preview && isset($block['data']['preview_image'])){
 				
 			if(isset($block['data']['preview_image']))	
 				$result="<img src='".$block['data']['preview_image']."' style='width:100%; height:auto;'>";	

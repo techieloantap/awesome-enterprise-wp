@@ -252,7 +252,7 @@ class awesome_import_export{
 					<p>
 						<label for="upload-htmlzip-block">Choose a file from your computer:</label> 
 						<input type="file" id="upload-htmlzip-block" name="import-htmlzip-block" size="25">
-						<label><input type="checkbox" name="overwrite">Overwrite file</label>
+						<label><input type="checkbox" id="overwrite" name="overwrite">Overwrite file</label>
 						
 					</p>
 					<p class="submit"><input type="button" name="submit" id="submit" class="button ladda-button js-import-htmlzip-blocks button-primary" value="Upload file and import blocks" data-style="zoom-out"></p>
@@ -534,7 +534,7 @@ class awesome_import_export{
 		//$overwrite = $assoc_args['overwrite'] ;
 		$base_path = '/var/tmp';
 		$code_path = 'codedump';
-		$overwrite = $_POST['overwrite'];
+		$overwrite = $_REQUEST['overwrite'];
 		
 		
 		if(empty($overwrite) || $overwrite==='true'){
@@ -579,53 +579,55 @@ class awesome_import_export{
 		unset($Regex);
 		//$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Modules ', $count );
 		
-		$folders = glob($exporte_path . "/*",GLOB_ONLYDIR);
-		print_r($folders); echo "<pre>";	
+		$folders = glob($exporte_path . "/*",GLOB_ONLYDIR);	
 		foreach ($folders as $folder){
-			$files = glob($folder."/*.module.html");
-			$post_type=basename($folder);
-			//WP_CLI::debug(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
-			foreach ($files as $filename){
-				$module=basename($filename);
-				$module=str_replace(".module.html","",$module);
-				//WP_CLI::debug('module to import = '. $module );	
-				
-				// read the file 
-				$content= file_get_contents($filename, true);
-				
-				$my_post = array(
-					'post_content'  =>  $content
-				);
-				$my_post['post_type']= wp_unslash( sanitize_post_field( 'post_type', $post_type, 0, 'db' ) );
-				$my_post['post_title']= wp_unslash( sanitize_post_field( 'post_title', $module, 0, 'db' ) );
-				
-				//check if module exits or not
-				global $wpdb;
-				$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
-				
-				//WP_CLI::debug(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
-				if(!empty($post_id)){
-					if($overwrite !== true){
-						$progress->tick();
-						continue;
-					}
-					$my_post['ID']=$post_id;
-				} else {
-					$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
-					$my_post['post_status']='publish';
+			if($folder !== '/var/tmp/code-export/__MACOSX'){
+				$files = glob($folder."/*.module.html");
+				$post_type=basename($folder);
+				//WP_CLI::debug(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
+				foreach ($files as $filename){
+					$module=basename($filename);
+					$module=str_replace(".module.html","",$module);
+					//WP_CLI::debug('module to import = '. $module );	
 					
+					// read the file 
+					$content= file_get_contents($filename, true);
+					
+					$my_post = array(
+						'post_content'  =>  $content
+					);
+					$my_post['post_type']= wp_unslash( sanitize_post_field( 'post_type', $post_type, 0, 'db' ) );
+					$my_post['post_title']= wp_unslash( sanitize_post_field( 'post_title', $module, 0, 'db' ) );
+					
+					//check if module exits or not
+					global $wpdb;
+					$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
+					
+					//WP_CLI::debug(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
+					if(!empty($post_id)){
+						if($overwrite !== true){
+							
+							$progress->tick();
+							continue;
+						}
+						$my_post['ID']=$post_id;
+					} else {
+						$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
+						$my_post['post_status']='publish';
+						
+					}
+					
+					// Insert the post into the database.
+					$postid = wp_insert_post( $my_post );
+					if(is_wp_error($postid)){
+						//WP_CLI::error( $postid->get_error_message() );
+						$block_output['status']='failed';
+						$block_output['message']=$postid->get_error_message();
+						echo json_encode($block_output);
+						exit;
+					}
+					$progress->tick();
 				}
-				
-				// Insert the post into the database.
-				$postid = wp_insert_post( $my_post );
-				if(is_wp_error($postid)){
-					//WP_CLI::error( $postid->get_error_message() );
-					$block_output['status']='failed';
-					$block_output['message']=$postid->get_error_message();
-					echo json_encode($block_output);
-					exit;
-				}
-				$progress->tick();
 			}
 		}
 

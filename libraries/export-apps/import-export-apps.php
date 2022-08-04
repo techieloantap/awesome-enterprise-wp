@@ -12,6 +12,8 @@ add_action( 'wp_ajax_awesome_export_code', 'awesome_import_export::awesome_expor
 add_action( 'wp_ajax_awesome_import_gt_code', 'awesome_import_export::awesome_import_gt_code' );
 add_action( 'wp_ajax_awesome_import_single_block', 'awesome_import_export::awesome_import_single_block' );
 
+add_action( 'wp_ajax_awesome_import_zip_html', 'awesome_import_export::awesome_import_zip_html' );
+
 /**
  * Registers our command when cli get's initialized.
  *
@@ -243,7 +245,21 @@ class awesome_import_export{
 				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-apps" data-style="zoom-out" data-action="apps" data-file-slug="selective-html" data-format="html">Export All Apps</button>
 			</p>';
 		echo'</form>';
-		
+		echo'<div class="import postbox">
+				<div class="inside">
+				<form enctype="multipart/form-data" id="htmlzip-import-form" method="post" class="wp-upload-form">
+				<h4>Import As HTML </h4>
+					<p>
+						<label for="upload-htmlzip-block">Choose a file from your computer:</label> 
+						<input type="file" id="upload-htmlzip-block" name="import-htmlzip-block" size="25">
+						<label><input type="checkbox" name="overwrite">Overwrite file</label>
+						
+					</p>
+					<p class="submit"><input type="button" name="submit" id="submit" class="button ladda-button js-import-htmlzip-blocks button-primary" value="Upload file and import blocks" data-style="zoom-out"></p>
+				</form>
+	
+				<div class="js-status-htmlzip-response"></div>
+				</div>';
 		echo '</div>
 			</div>';	
 	}
@@ -507,6 +523,119 @@ class awesome_import_export{
 		
         // give output
         WP_CLI::success( $count. ' modules imported!' ); // Prepends Success to message
+
+	}
+	
+	public function awesome_import_zip_html() {
+
+        // process arguments 
+		//$code_path = $assoc_args['code-path'];
+		
+		//$overwrite = $assoc_args['overwrite'] ;
+		$base_path = '/var/tmp';
+		$code_path = 'codedump';
+		$overwrite = $_POST['overwrite'];
+		
+		
+		if(empty($overwrite) || $overwrite==='true'){
+			$overwrite=true;
+		}
+		
+		//WP_CLI::line('Importing Code From '. WP_CLI::colorize( '%B '. $code_path.'%n' ) );
+
+		if(!is_dir($base_path.'/'.$code_path )){
+			/*WP_CLI::warning( 'Code Path '.$code_path.' not found.' );
+			WP_CLI::halt( 200 ); */
+			$block_output['status']='failed';
+			$block_output['message']='Code Path '.$code_path.' not found.';
+			echo json_encode($block_output);
+			exit;
+		}
+
+		$filename = $_FILES['file']['name'];
+		
+		$location = $base_path.'/'.$code_path.'/'.$filename;
+		
+		$ismove = move_uploaded_file($_FILES['file']['tmp_name'], $location);
+		
+		$base_export_folder = 'code-export';
+
+		$file_name = $filename.'.tar.gz';
+
+		//Unzip file to destination folder /var/tmp/code-export
+		$cmd='tar -xzf '.$base_path.'/'.$code_path.'/'.$filename.'  -C '.$base_path . '/'.$base_export_folder;
+		
+		shell_exec($cmd);
+		
+		$exporte_path = $base_path . '/'.$base_export_folder;
+		
+		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($exporte_path));
+		
+		$Regex = new RegexIterator($objects, '/^.+\.html$/i', RecursiveRegexIterator::GET_MATCH);
+		
+		$count= iterator_count($Regex);
+		
+		unset($objects);
+		unset($Regex);
+		//$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Modules ', $count );
+		
+		$folders = glob($exporte_path . "/*",GLOB_ONLYDIR);
+		print_r($folders); echo "<pre>";	
+		foreach ($folders as $folder){
+			$files = glob($folder."/*.module.html");
+			$post_type=basename($folder);
+			//WP_CLI::debug(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
+			foreach ($files as $filename){
+				$module=basename($filename);
+				$module=str_replace(".module.html","",$module);
+				//WP_CLI::debug('module to import = '. $module );	
+				
+				// read the file 
+				$content= file_get_contents($filename, true);
+				
+				$my_post = array(
+					'post_content'  =>  $content
+				);
+				$my_post['post_type']= wp_unslash( sanitize_post_field( 'post_type', $post_type, 0, 'db' ) );
+				$my_post['post_title']= wp_unslash( sanitize_post_field( 'post_title', $module, 0, 'db' ) );
+				
+				//check if module exits or not
+				global $wpdb;
+				$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
+				
+				//WP_CLI::debug(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
+				if(!empty($post_id)){
+					if($overwrite !== true){
+						$progress->tick();
+						continue;
+					}
+					$my_post['ID']=$post_id;
+				} else {
+					$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
+					$my_post['post_status']='publish';
+					
+				}
+				
+				// Insert the post into the database.
+				$postid = wp_insert_post( $my_post );
+				if(is_wp_error($postid)){
+					//WP_CLI::error( $postid->get_error_message() );
+					$block_output['status']='failed';
+					$block_output['message']=$postid->get_error_message();
+					echo json_encode($block_output);
+					exit;
+				}
+				$progress->tick();
+			}
+		}
+
+		$progress->finish();
+		
+        // give output
+       	// WP_CLI::success( $count. ' modules imported!' ); // Prepends Success to message
+	   	$block_output['status']='success';
+		$block_output['message']= $count. ' modules imported!';
+		echo json_encode($block_output);
 
     }
 }

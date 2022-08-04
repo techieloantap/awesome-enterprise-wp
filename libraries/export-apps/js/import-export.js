@@ -47,7 +47,7 @@ var import_export={};
 			
 			(function() {
 				var element = targets[i];
-
+				
 				// Make sure we're working with a DOM element
 				if( typeof element.addEventListener === 'function' ) {
 					var instance = Ladda.create( element );
@@ -159,5 +159,44 @@ var import_export={};
 			
 		}
 	});
+
+	import_export.ladda_bind('.js-import-htmlzip-blocks',{
+		
+		callback: function( instance ) {
+			
+			var active_btn=this;
+			
+			event.preventDefault();
+
+			
+			var fd = new FormData();
+			console.log(fd);
+			var files = $('#upload-htmlzip-block')[0].files;
+			
+			// Check file selected or not
+			if(files.length > 0 ){
+				fd.append('file',files[0]);
+				url=ajaxurl+'?action=awesome_import_zip_html';
+				$.ajax({
+					url: url,
+					type: 'post',
+					data: fd,
+					contentType: false,
+					processData: false,
+					success: function(response){
+						console.log(response);
+						return;
+						var data = $.parseJSON(response);
+						console.log(data);
+						$(".js-status-htmlzip-response").append( "<h2>Importing file is done.</h2> <ol></ol>" );
+						
+						instance.stop();
+					},
+				});
+			}   
+			
+		}
+	});
+	
 	
 });

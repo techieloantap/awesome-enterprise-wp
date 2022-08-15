@@ -612,10 +612,9 @@ class awesome_import_export{
 						$my_post['ID']=$post_id;
 					} else {
 						$my_post['post_name']=	wp_unslash( sanitize_post_field( 'post_name', $module, 0, 'db' )  );
-						$my_post['post_status']='publish';
-						
 					}
 					
+					$my_post['post_status']='publish';
 					// Insert the post into the database.
 					$postid = wp_insert_post( $my_post );
 					

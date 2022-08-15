@@ -15,6 +15,11 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.4
+* Improved: Added ability to import the html tar.gz package from export screen.
+* Improved: Arranged the screen shoowing services list by the connections.
+* Fixed: sitemap_index.xml file was showing wrong timestamp for app site map files.
+
 ##### 3.1.3
 * Improved: Added ability to show preview images for Awesome Gutenberg blocks
 * Improved: Added new category "Awesome UI Blocks" in the list of Gutenberg blocks

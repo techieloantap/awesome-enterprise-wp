@@ -245,6 +245,7 @@ class awesome_import_export{
 				<button type="submit" name="action" class="button button-primary ladda-button js-app-export-button" value="export-apps" data-style="zoom-out" data-action="apps" data-file-slug="selective-html" data-format="html">Export All Apps</button>
 			</p>';
 		echo'</form>';
+		echo '</div>';
 		echo'<div class="import postbox">
 				<div class="inside">
 				<form enctype="multipart/form-data" id="htmlzip-import-form" method="post" class="wp-upload-form">
@@ -260,8 +261,7 @@ class awesome_import_export{
 	
 				<div class="js-status-htmlzip-response"></div>
 				</div>';
-		echo '</div>
-			</div>';	
+	   echo'</div>';	
 	}
 
 	static function awesome_export_code(){
@@ -532,44 +532,44 @@ class awesome_import_export{
 		//$code_path = $assoc_args['code-path'];
 		
 		//$overwrite = $assoc_args['overwrite'] ;
-		$base_path = '/var/tmp';
-		$code_path = 'codedump';
+		$upload_dir = realpath(ABSPATH . '/..').'/html-code-import';
+		$base_export_folder = date('YmdHis');
+		//$base_path = '/var/tmp';
+		//$code_path = 'codedump';
 		$overwrite = $_REQUEST['overwrite'];
 		
+		if (!file_exists($upload_dir)) {
+				mkdir($upload_dir, 0777, true);
+		}
 		
 		if(empty($overwrite) || $overwrite==='true'){
 			$overwrite=true;
 		}
 		
-		//WP_CLI::line('Importing Code From '. WP_CLI::colorize( '%B '. $code_path.'%n' ) );
-
-		if(!is_dir($base_path.'/'.$code_path )){
-			/*WP_CLI::warning( 'Code Path '.$code_path.' not found.' );
-			WP_CLI::halt( 200 ); */
-			$block_output['status']='failed';
-			$block_output['message']='Code Path '.$code_path.' not found.';
-			echo json_encode($block_output);
-			exit;
-		}
 
 		$filename = $_FILES['file']['name'];
 		
-		$location = $base_path.'/'.$code_path.'/'.$filename;
+		$location = $upload_dir.'/'.$filename;
 		
 		$ismove = move_uploaded_file($_FILES['file']['tmp_name'], $location);
 		
-		$base_export_folder = 'code-export';
+		
 
 		$file_name = $filename.'.tar.gz';
-
+		
+		$export_path = $upload_dir . '/'.$base_export_folder;
+		if (!file_exists($export_path)) {
+				mkdir($export_path, 0777, true);
+		}
+		
 		//Unzip file to destination folder /var/tmp/code-export
-		$cmd='tar -xzf '.$base_path.'/'.$code_path.'/'.$filename.'  -C '.$base_path . '/'.$base_export_folder;
+		$cmd='tar -xzf '.$location.'  -C '.$export_path.' --strip-components=1'; //strip components to ensure top level directory is stripped
 		
 		shell_exec($cmd);
 		
-		$exporte_path = $base_path . '/'.$base_export_folder;
 		
-		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($exporte_path));
+		
+		$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($export_path));
 		
 		$Regex = new RegexIterator($objects, '/^.+\.html$/i', RecursiveRegexIterator::GET_MATCH);
 		
@@ -579,12 +579,14 @@ class awesome_import_export{
 		unset($Regex);
 		//$progress = \WP_CLI\Utils\make_progress_bar( 'Importing Modules ', $count );
 		
-		$folders = glob($exporte_path . "/*",GLOB_ONLYDIR);	
+		$folders = glob($export_path . "/*",GLOB_ONLYDIR);	
 		foreach ($folders as $folder){
-			if($folder !== '/var/tmp/code-export/__MACOSX'){
+
+			if($folder === $export_path.'/__MACOSX') continue;
+			
 				$files = glob($folder."/*.module.html");
 				$post_type=basename($folder);
-				//WP_CLI::debug(WP_CLI::colorize( '%M Post Type = '. $post_type.'%n' ) );
+
 				foreach ($files as $filename){
 					$module=basename($filename);
 					$module=str_replace(".module.html","",$module);
@@ -603,11 +605,8 @@ class awesome_import_export{
 					global $wpdb;
 					$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts WHERE post_name = '" . $module . "' AND post_type = '" . $post_type . "'");
 					
-					//WP_CLI::debug(WP_CLI::colorize( '%B post_id = '. $post_id.'%n' ) );
 					if(!empty($post_id)){
 						if($overwrite !== true){
-							
-							$progress->tick();
 							continue;
 						}
 						$my_post['ID']=$post_id;
@@ -619,25 +618,29 @@ class awesome_import_export{
 					
 					// Insert the post into the database.
 					$postid = wp_insert_post( $my_post );
-					if(is_wp_error($postid)){
-						//WP_CLI::error( $postid->get_error_message() );
-						$block_output['status']='failed';
-						$block_output['message']=$postid->get_error_message();
-						echo json_encode($block_output);
-						exit;
-					}
-					$progress->tick();
+					
 				}
-			}
+
 		}
 
-		$progress->finish();
-		
+		//delete the folders and files after import
+		$it = new RecursiveDirectoryIterator($export_path, RecursiveDirectoryIterator::SKIP_DOTS);
+		$files = new RecursiveIteratorIterator($it,
+					 RecursiveIteratorIterator::CHILD_FIRST);
+		foreach($files as $file) {
+			if ($file->isDir()){
+				rmdir($file->getRealPath());
+			} else {
+				unlink($file->getRealPath());
+			}
+		}
+		rmdir($export_path);
+		unlink($location);
         // give output
-       	// WP_CLI::success( $count. ' modules imported!' ); // Prepends Success to message
 	   	$block_output['status']='success';
 		$block_output['message']= $count. ' modules imported!';
 		echo json_encode($block_output);
-
+		wp_die();
+	
     }
 }

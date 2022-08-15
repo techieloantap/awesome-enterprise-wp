@@ -92,18 +92,31 @@ class aw2_menu{
 			echo '<h3>Services</h3>';			
 			//register services
 			$handlers=&aw2_library::get_array_ref('handlers');
-			ksort($handlers);			
-			echo "<ul class='inline'>";
+			ksort($handlers);	
+			$services= array();
 			foreach($handlers as $key => $handler){
 				if(isset($handler['post_type']) && isset($handler['@service']) && $handler['@service'] === true ){
 					if(!isset($handler['service_label'])) continue;
+					
+					$connection = isset($handler['connection'])?$handler['connection']:'Local';
+					$services[$connection][]=array('service_id'=>$handler['service_id'],'post_type'=>$handler['post_type'],'service_label'=>$handler['post_type']);
+				}	
+			}	
+					
+			
+			foreach($services as $key => $service_handler){
+				echo"<h4>$key</h4>";
+				echo '<ul class="inline">';
+				array_map(function($service){
 				
-					echo "<li style='display:inline-block; width:33%;'>";
-						echo "<a href='edit.php?post_type=".$handler['post_type']."'>".$handler['service_label']."</a>";
-					echo "</li>";
-				}
+					echo '<li style="display:inline-block; width:33%;">';
+						echo "<a href='edit.php?post_type=".$service['post_type']."'>".$service['service_label']."(".$service['service_id'].")</a>";
+					echo '</li>';
+				},$service_handler);
+				echo '</ul>';
 			}
-			echo "</ul>";
+			
+			
 		echo '</div>';
 		
 		echo '

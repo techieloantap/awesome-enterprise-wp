@@ -15,6 +15,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.5
+* Improved: made awesome core and awesome app CPTs to be dynamic based on values defined in AWESOME_CORE_POST_TYPE, AWESOME_APPS_POST_TYPE which can be defined in wp-config.php 
+
 ##### 3.1.4
 * Improved: Added ability to import the html tar.gz package from export screen.
 * Improved: Arranged the screen shoowing services list by the connections.

@@ -381,7 +381,8 @@ function awesome_save_postdata( $post_id ) {
 	 // } else {
 	//		return $post_id;
 	 // }
-
+	 if(!isset($_POST['awesome_code'])) return $post_id;
+	 
 	  /* OK, its safe for us to save the data now. */
 
 	  // Sanitize user input.

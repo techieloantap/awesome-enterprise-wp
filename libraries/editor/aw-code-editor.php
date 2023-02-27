@@ -7,9 +7,10 @@ add_action('wp_ajax_codeeditor_update', 'awesome_save_without_refersh');
 
 function awesome_add_custom_box() {
 	$screens = Monoframe::get_awesome_post_type();
-
 	foreach ( $screens as $screen ) {
-		
+		if(empty($screen))
+			continue;
+			
 		add_meta_box(
 			'awesome_codemirror',
 		   'Awesome Code Editor',

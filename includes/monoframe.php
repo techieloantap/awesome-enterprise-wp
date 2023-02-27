@@ -53,14 +53,13 @@ class Monoframe
 			foreach($app['collection'] as $collection_name => $collection){
 				if($collection_name == 'posts')
 					continue;
-				if(isset($collection['post_type']))
+				if(isset($collection['post_type']) && !empty($collection['post_type']))
 					$app_post_types[]=$collection['post_type'];
 			}
 		}
 		
 		$app_post_types = array_merge($default_post_types, $app_post_types);
-		
-		
+
 		$service_post_type= array();
 		$handlers=&aw2_library::get_array_ref('handlers');
 		
@@ -75,7 +74,12 @@ class Monoframe
 				$service_post_type[] =  $handler['post_type'];
 			}	
 		}
-				
+		if(\aw2_library::is_live_debug()){
+			
+			$live_debug_event['post_types_handlers']=$service_post_type;
+			
+			\aw2\live_debug\publish_event(['event'=>$live_debug_event,'format'=>$debug_format]);
+		}		
 		$app_post_types = array_merge($app_post_types, $service_post_type);
 		unset($service_post_type);
 		
@@ -85,7 +89,8 @@ class Monoframe
 			$app_post_types = array_merge($app_post_types, $additional_slugs);
 		}
 		
-		return apply_filters('monoframe-awesome-post-types',$app_post_types);
+		$app_post_types = apply_filters('monoframe-awesome-post-types',$app_post_types);	
+		return $app_post_types;
 		
 	}
    

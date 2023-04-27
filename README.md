@@ -15,6 +15,9 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.6
+* Fixed: fixed an issue where pages were getting overwritten unintentionally and code editor was showing.
+
 ##### 3.1.5
 * Improved: made awesome core and awesome app CPTs to be dynamic based on values defined in AWESOME_CORE_POST_TYPE, AWESOME_APPS_POST_TYPE which can be defined in wp-config.php 
 

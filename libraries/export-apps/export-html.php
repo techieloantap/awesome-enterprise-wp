@@ -164,6 +164,7 @@ function awesome_export_html( $args = array() ) {
 			
 			//create default settings json
 			if(isset($settings_list[$post_type])){
+				$settings_json =array();
 				$collection_directory = $collection_base_directory. $post_type;
 				$file = $collection_directory . '/settings.json'; 
 				

@@ -56,7 +56,10 @@ function image_resize($atts,$content=null,$shortcode){
 	);
 
 	$file_info = pathinfo( $image_path );
-	$extension = '.'. $file_info['extension'];
+	$extension='';
+	if(isset($file_info['extension']))
+		$extension = '.'. $file_info['extension'];
+
 	// the image path without the extension
 	$no_ext_path = $file_info['dirname'].'/'.$file_info['filename'];
 

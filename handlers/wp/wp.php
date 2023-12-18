@@ -314,10 +314,27 @@ class aw2wp_get{
 	}
 
 	function sidebar(){
-		
+		/**
+		 * 
+		$main_piece=array_shift($this->pieces);	
+		if(empty($main_piece)){
+			\aw2_library::set_error('the format is sidebar.<sidebar_id or name> to get the sidebar'); 
+			return '';
+		}
+		$output = '';
+		ob_start();
+			dynamic_sidebar( $main_piece );
+		$output = ob_get_clean();
+
+		return $output;
+		 */
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is sidebar.<sidebar_id or name> to get the sidebar'); 
 			return '';
+		}
+		// Bail out, if there is no sidebar registered with given ID.
+		if ( ! is_active_sidebar( $id ) ) {
+			return NULL;
 		}
 		$output = '';
 		ob_start();

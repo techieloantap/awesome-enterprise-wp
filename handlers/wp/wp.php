@@ -108,7 +108,7 @@ class aw2wp_get{
 				\aw2_library::resolve_array($this);
 			}
 			elseif(is_string($this->value) || is_bool($this->value) || is_numeric($this->value)){
-				$this->value = \aw2_library::resolve_string($o);
+				$this->value = \aw2_library::resolve_string($this);
 			}
 			else{
 				$this->value='';

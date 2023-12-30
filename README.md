@@ -15,6 +15,13 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.7
+
+* Fixed: the error "Undefined index: extension"
+* Fixed: the issue, where sidebar was not getting called properly.
+* Fixed: the  issue: undefined variable $o
+* Fixed: app_seo was making to many requests to settings module and if we have large number of apps than it become significant time, so corrected the approach.
+
 ##### 3.1.6
 * Fixed: fixed an issue where pages were getting overwritten unintentionally and code editor was showing.
 

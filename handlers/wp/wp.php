@@ -328,12 +328,13 @@ class aw2wp_get{
 
 		return $output;
 		 */
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is sidebar.<sidebar_id or name> to get the sidebar'); 
 			return '';
 		}
 		// Bail out, if there is no sidebar registered with given ID.
-		if ( ! is_active_sidebar( $id ) ) {
+		if ( ! is_active_sidebar( $this->main_piece ) ) {
 			return NULL;
 		}
 		$output = '';
@@ -383,7 +384,7 @@ class aw2wp_get{
 		$value=get_option( $option );
 		
 		if($value===false){
-			\aw2_library::set_error('Option '. $this->main_piece.' dose not exists'); 
+			\aw2_library::set_error('Option '. $option.' dose not exists'); 
 			$value='';
 		}	
 			
@@ -455,6 +456,7 @@ class aw2wp_get{
 		return get_term_meta($term_id, $term_meta_key, true);
 	}
 	function nonce(){
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is nounce.<key> to get the value'); 
 			return '';
@@ -463,6 +465,7 @@ class aw2wp_get{
 		return wp_create_nonce($this->main_piece) . '::' . $this->main_piece;
 	}
 	function denonce(){
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is denonce.<key> to get the value'); 
 			return '';

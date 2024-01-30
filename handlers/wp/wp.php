@@ -87,7 +87,7 @@ class aw2wp_get{
 		$this->action=$action;
 		$this->pieces=$main_piece;
 		$this->atts=$atts;
-		$this->content=trim($content);
+		$this->content=is_null($content)?'':trim($content);
 		$this->status=true;
 	 }
 	}

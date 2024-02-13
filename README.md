@@ -15,6 +15,11 @@ You will need to update the wp-config.php file with various defines specified in
 
 ### Changelog 
 
+##### 3.1.8
+
+* Fixed: wp.get sidebar.<id> was not working properly.
+* Fixed: error message " trim(): Passing null to parameter #1 ($string) of type string is deprecated"
+
 ##### 3.1.7
 
 * Fixed: the error "Undefined index: extension"

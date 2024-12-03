@@ -8,6 +8,19 @@ if (!defined('ABSPATH')){
 function aw2_navwalker_modify_nav_menu_args( $args )
 {
 
+
+	// Check if the custom walker is explicitly requested
+	$use_custom_walker = isset( $args['use_custom_walker'] ) && $args['use_custom_walker'] === true;
+
+	// Fire a hook to allow third-party handling
+	$allow_third_party = apply_filters( 'aw2_allow_third_party_menu_walker', false, $args );
+
+	// If third-party handling is allowed and custom walker is not explicitly requested, skip
+	if ( $allow_third_party && !$use_custom_walker ) {
+		return $args;
+	}
+	
+
 	if(!isset($args['container']))
 	{
 		$args['container'] ='div';

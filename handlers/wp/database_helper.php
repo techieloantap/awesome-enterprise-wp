@@ -21,7 +21,7 @@ class awesome2_query{
 		aw2_library::set_error('Query Method does not exist'); 
 	}
 	
-	function att($el,$default=null){
+	function att($el,$default=''){
 		if(array_key_exists($el,$this->atts))
 			return $this->atts[$el];
 		return $default;

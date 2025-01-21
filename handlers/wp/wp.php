@@ -122,7 +122,7 @@ class aw2wp_get{
 		\aw2_library::set_error('Register Method does not exist'); 
 	}
 	
-	function att($el,$default=null){
+	function att($el,$default=''){
 		if(array_key_exists($el,$this->atts))
 			return $this->atts[$el];
 		return $default;
@@ -314,7 +314,7 @@ class aw2wp_get{
 	}
 
 	function sidebar(){
-		/**
+		/*
 		 * 
 		$main_piece=array_shift($this->pieces);	
 		if(empty($main_piece)){

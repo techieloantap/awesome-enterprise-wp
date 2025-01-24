@@ -27,26 +27,31 @@ function image_resize($atts,$content=null,$shortcode){
 	
 	$image_found=false;
 	
+	$blank_response = array(
+		'url' => '#',
+		'path' => '',
+		'width' => -1,
+		'height' => -1
+	  );
 	
 	$image_path = parse_url( $image_url );
-	$image_path = ltrim( $image_path['path'], '/' );
+	$image_path = isset($image_path['path']) ? ltrim($image_path['path'], '/') : '';
 
+	if (!$image_path || !file_exists($image_path)) {
+		\aw2_library::set_error('Invalid or missing image path: ' . $image_path);
+		return $blank_response;
+	}
 
-    $orig_size = getimagesize( $image_path );
-    
+	$orig_size = @getimagesize($image_path);
+	if ($orig_size === false) {
+		\aw2_library::set_error('Unable to retrieve image size for: ' . $image_path);
+		return $blank_response;
+	}
+
 	$image_src[0] = $image_url;    
     $image_src[1] = $orig_size[0];
     $image_src[2] = $orig_size[1];
-
-	if (!$image_path) {
-		return array(
-		  'url' => '#',
-		  'path' => '',
-		  'width' => -1,
-		  'height' => -1
-		);
-	}
-    
+	
 	// default output - without resizing
 	$vt_image = array (
 		'url' => $image_src[0],

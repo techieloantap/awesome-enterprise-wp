@@ -87,7 +87,7 @@ class aw2wp_get{
 		$this->action=$action;
 		$this->pieces=$main_piece;
 		$this->atts=$atts;
-		$this->content=trim($content);
+		$this->content=is_null($content)?'':trim($content);
 		$this->status=true;
 	 }
 	}
@@ -108,7 +108,7 @@ class aw2wp_get{
 				\aw2_library::resolve_array($this);
 			}
 			elseif(is_string($this->value) || is_bool($this->value) || is_numeric($this->value)){
-				$this->value = \aw2_library::resolve_string($o);
+				$this->value = \aw2_library::resolve_string($this);
 			}
 			else{
 				$this->value='';
@@ -122,7 +122,7 @@ class aw2wp_get{
 		\aw2_library::set_error('Register Method does not exist'); 
 	}
 	
-	function att($el,$default=null){
+	function att($el,$default=''){
 		if(array_key_exists($el,$this->atts))
 			return $this->atts[$el];
 		return $default;
@@ -314,10 +314,28 @@ class aw2wp_get{
 	}
 
 	function sidebar(){
-		
+		/*
+		 * 
+		$main_piece=array_shift($this->pieces);	
+		if(empty($main_piece)){
+			\aw2_library::set_error('the format is sidebar.<sidebar_id or name> to get the sidebar'); 
+			return '';
+		}
+		$output = '';
+		ob_start();
+			dynamic_sidebar( $main_piece );
+		$output = ob_get_clean();
+
+		return $output;
+		 */
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is sidebar.<sidebar_id or name> to get the sidebar'); 
 			return '';
+		}
+		// Bail out, if there is no sidebar registered with given ID.
+		if ( ! is_active_sidebar( $this->main_piece ) ) {
+			return NULL;
 		}
 		$output = '';
 		ob_start();
@@ -366,7 +384,7 @@ class aw2wp_get{
 		$value=get_option( $option );
 		
 		if($value===false){
-			\aw2_library::set_error('Option '. $this->main_piece.' dose not exists'); 
+			\aw2_library::set_error('Option '. $option.' dose not exists'); 
 			$value='';
 		}	
 			
@@ -438,6 +456,7 @@ class aw2wp_get{
 		return get_term_meta($term_id, $term_meta_key, true);
 	}
 	function nonce(){
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is nounce.<key> to get the value'); 
 			return '';
@@ -446,6 +465,7 @@ class aw2wp_get{
 		return wp_create_nonce($this->main_piece) . '::' . $this->main_piece;
 	}
 	function denonce(){
+		$this->main_piece = array_shift($this->pieces);
 		if(empty($this->main_piece)){
 			\aw2_library::set_error('the format is denonce.<key> to get the value'); 
 			return '';

@@ -37,9 +37,7 @@ function save_profile_update( $user_id ) {
 		if ( ! empty( $_POST['awesome_adf_dev_cap'] ) )
 		{	
 			update_user_meta( $user->ID, 'develop_for_awesomeui', 'yes');
-			foreach($_POST['awesome_adf_dev_cap'] as $cap){
-				$user->add_cap( $cap);
-			}
+			$user->add_cap( "develop_for_awesomeui");
 		}
 		return;
 	}
@@ -55,15 +53,15 @@ function user_profile_fields( $user ) {
 			$checked='checked="checked"';
 			
 		?>
-		    <h3>Awesome ADF Control</h3>
+		    <h3>Awesome Enterprise Control</h3>
 		    <table class="form-table">
 		        <tr>
 		            <th>
-		                <label for="awesome_adf_dev_cap">Awesome ADF Permissions</label>
+		                <label for="awesome_adf_dev_cap">Awesome Enterprise Permissions</label>
 					</th>
 		            <td>
-						<input type='checkbox' value='develop_for_awesomeui' name='awesome_adf_dev_cap[]' <?php echo $checked; ?> id='awesome_adf_dev_cap'>Grant Developer Access
-		                <p class="description">This allows user to see and manage Awesome ADF Components</p>
+						<input type='checkbox' value='develop_for_awesomeui' name='awesome_adf_dev_cap' <?php echo $checked; ?> id='awesome_adf_dev_cap'>Grant Developer Access
+		                <p class="description">This allows user to see and manage Awesome Enterprise Code</p>
 		            </td>
 		        </tr>
 		    </table>

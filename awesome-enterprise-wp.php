@@ -2,18 +2,20 @@
 /*
 Plugin Name: Awesome Enterprise WP
 Plugin URI: http://www.getawesomestudio.com
-Description: Awesome Enterprise is a shortcode based low code platform which comes with a useful services and apps that enables us to create easily custom Workflows in WordPress. 
-Version: 3.1.4
+Description: Awesome Enterprise is a shortcode-based low code platform with useful services and apps enabling us to easily create custom WordPress workflow. 
+Version: 3.1.8
 Author: WPoets Team
 Author URI: http://www.wpoets.com
 License: GPLv3 or Later
 */
 
+global $table_prefix;
 
 if (!defined('IS_WP'))define('IS_WP', true);
 if (!defined('AWESOME_DEBUG'))define('AWESOME_DEBUG', false);
+$site_id = get_current_blog_id();
+if (!defined('ENV_CACHE_KEY'))define('ENV_CACHE_KEY', 'env_cache-'.$site_id.$table_prefix.DB_NAME);
 
-if (!defined('ENV_CACHE_KEY'))define('ENV_CACHE_KEY', 'env_cache-'.$table_prefix.DB_NAME);
 
 if (!defined('AWESOME_CORE_POST_TYPE'))define('AWESOME_CORE_POST_TYPE', 'awesome_core');
 if (!defined('AWESOME_APPS_POST_TYPE'))define('AWESOME_APPS_POST_TYPE', 'aw2_app');

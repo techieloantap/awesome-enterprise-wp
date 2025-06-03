@@ -156,7 +156,7 @@ class apps_setup_wp{
 	
 	static function register_default_cpts(){
 			
-		register_post_type('awesome_core', array(
+		register_post_type(AWESOME_CORE_POST_TYPE, array(
 			'label' => 'Core',
 			'description' => '',
 			'public' => false,
@@ -190,7 +190,7 @@ class apps_setup_wp{
 			)
 		)); 
 		
-		register_post_type('aw2_app', array(
+		register_post_type(AWESOME_APPS_POST_TYPE, array(
 			'label' => 'Local Apps',
 			'public' => false,
 			'show_in_nav_menus'=>true,
